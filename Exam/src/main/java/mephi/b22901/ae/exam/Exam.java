@@ -2,6 +2,8 @@
 
 package mephi.b22901.ae.exam;
 
+import mephi.b22901.ae.exam.GUI.MainFrame;
+
 /**
  *
  * @author artyom_egorkin
@@ -9,6 +11,6 @@ package mephi.b22901.ae.exam;
 public class Exam {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        new MainFrame().setVisible(true);
     }
 }
