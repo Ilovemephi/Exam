@@ -95,7 +95,7 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newRequestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newRequestButtonActionPerformed
-        
+        new NewRequestFrame().setVisible(true);
     }//GEN-LAST:event_newRequestButtonActionPerformed
 
     private void requestsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestsButtonActionPerformed
