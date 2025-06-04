@@ -21,6 +21,7 @@ public class Client {
     }
     
     public Client(String fullName, String phoneNumber, String carNumber, int carId) {
+        this.id = 0;
         this.carId = carId;
         this.carNumber = carNumber;
         this.fullName = fullName;
