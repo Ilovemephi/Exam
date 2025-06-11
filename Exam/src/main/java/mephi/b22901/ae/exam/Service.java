@@ -10,11 +10,11 @@ public class Service {
     private int id; 
     private String category; 
     private String subcategory; 
-    private int price; 
+    private double price; 
     private String requiredMechanicRole; 
     
 
-    public Service(String category, String subcategory, int price, String requiredMechanicRole) {
+    public Service(String category, String subcategory, double price, String requiredMechanicRole) {
         this.id = 0; 
         this.category = category;
         this.subcategory = subcategory;
@@ -23,7 +23,7 @@ public class Service {
     }
     
    
-    public Service(int id, String category, String subcategory, int price, String requiredMechanicRole) {
+    public Service(int id, String category, String subcategory, double price, String requiredMechanicRole) {
         this.id = id;
         this.category = category;
         this.subcategory = subcategory;
@@ -44,7 +44,7 @@ public class Service {
         return subcategory;
     }
     
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
     
@@ -65,7 +65,7 @@ public class Service {
         this.subcategory = subcategory;
     }
     
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
     
