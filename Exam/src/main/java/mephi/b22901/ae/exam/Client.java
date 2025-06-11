@@ -10,22 +10,19 @@ public class Client {
     private String fullName;
     private String phoneNumber;
     private String carNumber;
-    private int carId;
     
-    public Client(int id, String fullName, String phoneNumber, String carNumber, int carId) {
-        this.carId = carId;
-        this.carNumber = carNumber;
+    public Client(String fullName, String phoneNumber, String carNumber) {
+        this.id = 0; 
         this.fullName = fullName;
-        this.id = id;
         this.phoneNumber = phoneNumber;
+        this.carNumber = carNumber;
     }
     
-    public Client(String fullName, String phoneNumber, String carNumber, int carId) {
-        this.id = 0;
-        this.carId = carId;
-        this.carNumber = carNumber;
+    public Client(int id, String fullName, String phoneNumber, String carNumber) {
+        this.id = id;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
+        this.carNumber = carNumber;
     }
     
     public int getId(){
@@ -44,9 +41,6 @@ public class Client {
         return carNumber;
     }
     
-    public int carId() {
-        return carId;
-    }
     
     public void setFullName(String fullName) {
         this.fullName = fullName;
@@ -60,9 +54,6 @@ public class Client {
         this.carNumber = carNumber;
     }
     
-    public void setCarId(int carId) {
-        this.carId = carId;
-    }
     
     public void setId(int id) {
         this.id = id;
@@ -71,7 +62,12 @@ public class Client {
     
     @Override
     public String toString() {
-        return "Client{id=" + id + ", fullName='" + fullName + "', phoneNumber='" + phoneNumber + "', carNumber='" + carNumber + "', carId=" + carId + "}";
+        return "Client{" +
+               "id=" + id +
+               ", fullName='" + fullName + '\'' +
+               ", phoneNumber='" + phoneNumber + '\'' +
+               ", carNumber='" + carNumber + '\'' +
+               '}';
     }
     
 }
