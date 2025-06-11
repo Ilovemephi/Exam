@@ -7,22 +7,22 @@ package mephi.b22901.ae.exam;
  */
 
 public class Invoice {
-    private int id; // invoice_id (SERIAL, генерируется базой)
-    private int requestId; // request_id (INTEGER, NOT NULL, FK на Requests)
-    private int clientId; // client_id (INTEGER, NOT NULL, FK на Clients)
-    private int masterId; // master_id (INTEGER, NOT NULL, FK на Employees)
-    private int totalAmount; // total_amount (INTEGER, NOT NULL)
+    private int id; 
+    private int requestId; 
+    private int clientId; 
+    private int masterId; 
+    private int totalAmount; 
     
-    // Конструктор для нового счёта (без id)
+    
     public Invoice(int requestId, int clientId, int masterId, int totalAmount) {
-        this.id = 0; // Явная инициализация для нового счёта
+        this.id = 0; 
         this.requestId = requestId;
         this.clientId = clientId;
         this.masterId = masterId;
         this.totalAmount = totalAmount;
     }
     
-    // Конструктор для загрузки из базы (с id)
+
     public Invoice(int id, int requestId, int clientId, int masterId, int totalAmount) {
         this.id = id;
         this.requestId = requestId;
@@ -31,7 +31,7 @@ public class Invoice {
         this.totalAmount = totalAmount;
     }
     
-    // Геттеры
+    
     public int getId() {
         return id;
     }
@@ -52,7 +52,7 @@ public class Invoice {
         return totalAmount;
     }
     
-    // Сеттеры
+
     public void setId(int id) {
         this.id = id;
     }
