@@ -33,11 +33,11 @@ public class Client {
         return fullName;
     }
     
-    public String phoneNumber() {
+    public String getphoneNumber() {
         return phoneNumber;
     }
     
-    public String carNumber() {
+    public String getcarNumber() {
         return carNumber;
     }
     
