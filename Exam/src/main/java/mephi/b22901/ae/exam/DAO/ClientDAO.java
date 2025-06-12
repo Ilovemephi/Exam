@@ -136,10 +136,7 @@ public class ClientDAO {
     
     public boolean updateClient(Client client) {
         String sql = "UPDATE Clients SET full_name = ?, phone_number = ?, car_number = ? WHERE id = ?";
-        try (
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+        try ( Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, client.getFullName());
             stmt.setString(2, client.getPhoneNumber());
             stmt.setString(3, client.getCarNumber());

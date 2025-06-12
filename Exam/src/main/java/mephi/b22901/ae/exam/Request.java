@@ -38,7 +38,7 @@ public class Request {
     }
     
 
-    public int getId() {
+    public int getRequestId() {
         return id;
     }
     
