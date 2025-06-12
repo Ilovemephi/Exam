@@ -66,4 +66,29 @@ public class EmployeeDAO {
     }
     
     
+    public List<Employee> getEmployeesByRole(String role) {
+        List<Employee> employees = new ArrayList<>();
+        String sql = "SELECT employee_id, full_name, role FROM Employees WHERE role = ?";
+        try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setString(1, role);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Employee employee = new Employee(
+                    rs.getInt("employee_id"),
+                    rs.getString("full_name"),
+                    rs.getString("role")
+                );
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Ошибка получения сотрудников по роли", e);
+        }
+        return employees;
+    }
+    
+    
 }
