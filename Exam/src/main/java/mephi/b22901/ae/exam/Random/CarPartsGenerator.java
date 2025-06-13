@@ -6,8 +6,13 @@ package mephi.b22901.ae.exam.Random;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import mephi.b22901.ae.exam.DAO.PartDAO;
 import mephi.b22901.ae.exam.Part;
 import mephi.b22901.ae.exam.Service;
 
@@ -17,45 +22,61 @@ import mephi.b22901.ae.exam.Service;
  * соответствующие категории и подкатегории услуги.
  */
 public class CarPartsGenerator {
-    private final List<Part> parts; 
-    private final Random random; 
 
-    /**
-     * Конструктор.
-     * @param parts Список всех запчастей из таблицы Parts.
-     */
-    public CarPartsGenerator(List<Part> parts) {
-        this.parts = parts;
-        this.random = new Random();
-    }
+
+    
 
     public List<Part> generatePartsForServices(List<Service> services) {
-        List<Part> selectedParts = new ArrayList<>();
-
-        for (Service service : services) {
-            String category = service.getCategory();
-            if ("Диагностика".equals(category) || "Сервисное обслуживание".equals(category)) {
+        List<Part> breakdownParts = new ArrayList<>();
+        PartDAO partDAO = new PartDAO();
+        List<Part> allParts = partDAO.getAllParts();
+        Set<String> partCategories = new HashSet<>();
+        for (Part part : allParts) {
+            if ("Сервисное обслуживание".equals(part.getCategory()))
                 continue;
-            }
-            if (random.nextBoolean()) {
-                List<Part> matchingParts = new ArrayList<>();
-                for (Part part : parts) {
-                    if (part.getCategory().equals(category)
-                            && part.getSubcategory().equals(service.getSubcategory())) {
-                        matchingParts.add(part);
-                    }
-                }
-                if (!matchingParts.isEmpty()) {
-                    int numParts = random.nextBoolean() ? 1 : 2;
-                    numParts = Math.min(numParts, matchingParts.size());
-                    Collections.shuffle(matchingParts, random);
-                    for (int i = 0; i < numParts; i++) {
-                        selectedParts.add(matchingParts.get(i));
-                    }
-                }
-            }
+            partCategories.add(part.getCategory());
+        }
+        List<String> categoriesList = new ArrayList<>(partCategories);
+
+        List<String> selectedCategories = addCategories(0.9, categoriesList);
+        
+        Set<String> subcategories = new HashSet<>();
+        
+        for (Part part : allParts){
+            if (selectedCategories.contains(part.getCategory()))
+                subcategories.add(part.getSubcategory());
+        }
+        
+        List<String> subcategoriesList = new ArrayList<>(subcategories);
+        List<String> selectedSubcategories = addCategories(0.85, subcategoriesList);
+        
+
+        for (Part part : allParts){
+            if (selectedSubcategories.contains(part.getSubcategory()))
+                breakdownParts.add(part);
         }
 
-        return selectedParts;
+        return breakdownParts;
     }
+    
+    private List<String> addCategories(double firstPercent, List<String> categoriesList){
+        List <String> selectedCategories = new ArrayList<>();
+         Random random = new Random();
+
+        if (random.nextDouble() < firstPercent) {
+            // firstPercent случаев 
+            Collections.shuffle(categoriesList);
+            selectedCategories.add(categoriesList.get(0));
+        } else {
+            // 100 - firstPercent случаев — 2 разные категории
+            Collections.shuffle(categoriesList);
+            selectedCategories.add(categoriesList.get(0));
+            selectedCategories.add(categoriesList.get(1));
+        }
+        
+        return selectedCategories;
+        
+    }
+    
+    
 }
