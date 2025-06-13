@@ -4,10 +4,13 @@
  */
 package mephi.b22901.ae.exam.Logic;
 
+import java.util.List;
 import java.util.Random;
 import mephi.b22901.ae.exam.Client;
 import mephi.b22901.ae.exam.DAO.ClientDAO;
+import mephi.b22901.ae.exam.DAO.EmployeeDAO;
 import mephi.b22901.ae.exam.DAO.RequestDAO;
+import mephi.b22901.ae.exam.Employee;
 import mephi.b22901.ae.exam.Request;
 
 /**
@@ -19,6 +22,8 @@ public class CarServiceLogic {
     private final ClientDAO clientDAO = new ClientDAO();
     private final RequestDAO requestDAO = new RequestDAO();
     private final Random random = new Random();
+    private final EmployeeDAO employeeDAO = new EmployeeDAO();
+
 
     
     public Request createNewRequest(Client client) {
@@ -48,7 +53,27 @@ public class CarServiceLogic {
     }
     
     
-    
+    public void assignMaster(Request request) {
+        // 1. Получить список всех мастеров-приёмщиков
+        List<Employee> masters = employeeDAO.getEmployeesByRole("Мастер-приёмщик");
+        if (masters == null || masters.isEmpty()) {
+            throw new RuntimeException("Нет ни одного мастера-приёмщика!");
+        }
+
+        // 2. Случайно выбрать одного из них
+        Employee selectedMaster = masters.get(random.nextInt(masters.size()));
+
+        // 3. Установить его ID в заявку
+        request.setMasterId(selectedMaster.getId());
+
+        // 4. Обновить заявку в базе данных
+        requestDAO.updateRequest(request);
+
+        // 5. (Необязательно) Сообщить о выборе мастера
+        System.out.println("Назначен мастер-приёмщик: " + selectedMaster.getFullName());
+    }
+
+
     
     
     
