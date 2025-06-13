@@ -2,17 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mephi.b22901.ae.exam;
+package mephi.b22901.ae.exam.Random;
 
 import mephi.b22901.ae.exam.DAO.PartDAO;
 
 import java.util.*;
+import mephi.b22901.ae.exam.Part;
+
 
 public class CarPartsGenerator {
 
     private final Random random = new Random();
 
-    public List<Part> generatePartsForServices(List<Service> services) {
+    public List<Part> generatePartsForServices() {
         List<Part> breakdownParts = new ArrayList<>();
         PartDAO partDAO = new PartDAO();
         List<Part> allParts = partDAO.getAllParts();

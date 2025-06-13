@@ -10,8 +10,12 @@ import mephi.b22901.ae.exam.Client;
 import mephi.b22901.ae.exam.DAO.ClientDAO;
 import mephi.b22901.ae.exam.DAO.EmployeeDAO;
 import mephi.b22901.ae.exam.DAO.RequestDAO;
+import mephi.b22901.ae.exam.DAO.RequestPartDAO;
 import mephi.b22901.ae.exam.Employee;
+import mephi.b22901.ae.exam.Part;
+import mephi.b22901.ae.exam.Random.CarPartsGenerator;
 import mephi.b22901.ae.exam.Request;
+import mephi.b22901.ae.exam.RequestPart;
 
 /**
  *
@@ -53,28 +57,51 @@ public class CarServiceLogic {
     }
     
     
-    public void assignMaster(Request request) {
-        // 1. Получить список всех мастеров-приёмщиков
+    public void assignMaster(Request request) { // Назначем именно ПРИЁМЩИКА
         List<Employee> masters = employeeDAO.getEmployeesByRole("Мастер-приёмщик");
         if (masters == null || masters.isEmpty()) {
             throw new RuntimeException("Нет ни одного мастера-приёмщика!");
         }
-
-        // 2. Случайно выбрать одного из них
+        
         Employee selectedMaster = masters.get(random.nextInt(masters.size()));
-
-        // 3. Установить его ID в заявку
         request.setMasterId(selectedMaster.getId());
-
-        // 4. Обновить заявку в базе данных
         requestDAO.updateRequest(request);
-
-        // 5. (Необязательно) Сообщить о выборе мастера
         System.out.println("Назначен мастер-приёмщик: " + selectedMaster.getFullName());
     }
 
 
-    
+    public void conductDiagnostic(Request request) {
+        if (request.getMasterId() == null) {
+        throw new IllegalStateException("Мастер-приёмщик не назначен, диагностика невозможна.");
+        }
+        if (!"новая заявка".equalsIgnoreCase(request.getStatus())) {
+        throw new IllegalStateException("Диагностику можно проводить только для новых заявок.");
+        }
+        if ("сервисное обслуживание".equalsIgnoreCase(request.getReason())) {
+            throw new IllegalStateException("Диагностика не требуется для сервисного обслуживания.");
+        }
+        
+        CarPartsGenerator generator = new CarPartsGenerator();
+        List<Part> diagnosedParts = generator.generatePartsForServices();
+        RequestPartDAO requestPartDAO = new RequestPartDAO();
+        for (Part part : diagnosedParts) {
+            requestPartDAO.addRequestPart(new RequestPart(request.getRequestId(), part.getId()));
+        }
+        
+        if (diagnosedParts.isEmpty()) {
+            System.out.println("Диагностика: неисправности не обнаружены.");
+        } else {
+            System.out.print("Диагностика выявила: ");
+            for (int i = 0; i < diagnosedParts.size(); i++) {
+                System.out.print(diagnosedParts.get(i).getName());
+                if (i != diagnosedParts.size() - 1) System.out.print(", ");
+            }
+            System.out.println();
+        }
+        // Меняем статус заявки
+        request.setStatus("Проведена диагностика");
+        requestDAO.updateRequest(request);
+    }
     
     
 }
