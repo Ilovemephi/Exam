@@ -11,63 +11,62 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mephi.b22901.ae.exam.Connection.DBConnection;
-import mephi.b22901.ae.exam.RequestService;
+import mephi.b22901.ae.exam.RequestPart;
 
 /**
  *
  * @author artyom_egorkin
  */
-public class RequestServiceDAO {
-    
-    public void addRequestService(RequestService requestService) {
-        String sql = "INSERT INTO Requests_Services (request_id, service_id) VALUES (?, ?)";
+public class RequestPartDAO {
+    // Добавить связь между заявкой и деталью
+    public void addRequestPart(RequestPart requestPart) {
+        String sql = "INSERT INTO Request_Parts (request_id, part_id) VALUES (?, ?)";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, requestService.getRequestId());
-            stmt.setInt(2, requestService.getServiceId());
+            stmt.setInt(1, requestPart.getRequestId());
+            stmt.setInt(2, requestPart.getPartId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Ошибка при добавлении услуги к заявке", e);
+            throw new RuntimeException("Ошибка при добавлении детали к заявке", e);
         }
     }
 
-    // Получить список всех услуг по конкретной заявке
-    public List<Integer> getServiceIdsByRequestId(int requestId) {
-        String sql = "SELECT service_id FROM Requests_Services WHERE request_id = ?";
-        List<Integer> serviceIds = new ArrayList<>();
+    // Получить список id деталей по заявке
+    public List<Integer> getPartIdsByRequestId(int requestId) {
+        List<Integer> partIds = new ArrayList<>();
+        String sql = "SELECT part_id FROM Request_Parts WHERE request_id = ?";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, requestId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                serviceIds.add(rs.getInt("service_id"));
+                partIds.add(rs.getInt("part_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Ошибка при получении id услуг по заявке", e);
+            throw new RuntimeException("Ошибка при получении деталей для заявки", e);
         }
-        return serviceIds;
+        return partIds;
     }
 
-    // Получить список всех заявок по конкретной услуге
-    public List<Integer> getRequestIdsByServiceId(int serviceId) {
-        String sql = "SELECT request_id FROM Requests_Services WHERE service_id = ?";
+    // Получить список id заявок по детали
+    public List<Integer> getRequestIdsByPartId(int partId) {
         List<Integer> requestIds = new ArrayList<>();
+        String sql = "SELECT request_id FROM Request_Parts WHERE part_id = ?";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, serviceId);
+            stmt.setInt(1, partId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 requestIds.add(rs.getInt("request_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Ошибка при получении id заявок по услуге", e);
+            throw new RuntimeException("Ошибка при получении заявок для детали", e);
         }
         return requestIds;
     }
-    
 
-    
+
 }
