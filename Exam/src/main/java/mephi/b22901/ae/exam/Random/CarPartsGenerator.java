@@ -61,7 +61,7 @@ public class CarPartsGenerator {
         return breakdownParts;
     }
 
-    private List<String> addCategories(int firstPercent, List<String> categoriesList) {
+    private List<String> addCategories(double firstPercent, List<String> categoriesList) {
         List<String> selectedCategories = new ArrayList<>();
         Collections.shuffle(categoriesList);
 
