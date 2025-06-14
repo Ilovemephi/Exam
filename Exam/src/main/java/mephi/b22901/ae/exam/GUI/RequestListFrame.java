@@ -146,7 +146,19 @@ public class RequestListFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = requestsTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int requestId = (int) requestsTable.getValueAt(selectedRow, 0); 
+            Request request = carServiceLogic.getRequestById(requestId); 
+            if (request != null) {
+                // Пока выводим сообщение, позже откроем RequestModerationFrame
+                javax.swing.JOptionPane.showMessageDialog(this, "Выбрана заявка #" + requestId);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Заявка не найдена!", "Ошибка", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Выберите заявку!", "Ошибка", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_selectButtonActionPerformed
 
     
