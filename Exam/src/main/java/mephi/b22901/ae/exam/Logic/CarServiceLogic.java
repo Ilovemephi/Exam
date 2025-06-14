@@ -5,20 +5,29 @@
 package mephi.b22901.ae.exam.Logic;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import mephi.b22901.ae.exam.Client;
 import mephi.b22901.ae.exam.DAO.ClientDAO;
 import mephi.b22901.ae.exam.DAO.EmployeeDAO;
 import mephi.b22901.ae.exam.DAO.RequestDAO;
+import mephi.b22901.ae.exam.DAO.RequestMechanicsDAO;
 import mephi.b22901.ae.exam.DAO.RequestPartDAO;
+import mephi.b22901.ae.exam.DAO.RequestServiceDAO;
+import mephi.b22901.ae.exam.DAO.ServiceDAO;
 import mephi.b22901.ae.exam.Employee;
 import mephi.b22901.ae.exam.Part;
 import mephi.b22901.ae.exam.Random.CarMaintenanceGenerator;
 import mephi.b22901.ae.exam.Random.CarPartsGenerator;
 import mephi.b22901.ae.exam.Request;
 import mephi.b22901.ae.exam.RequestPart;
+import mephi.b22901.ae.exam.RequestService;
+import mephi.b22901.ae.exam.Service;
 
 /**
  *
@@ -30,6 +39,10 @@ public class CarServiceLogic {
     private final RequestDAO requestDAO = new RequestDAO();
     private final Random random = new Random();
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
+    private final RequestPartDAO requestPartDAO = new RequestPartDAO();
+    private final ServiceDAO serviceDAO = new ServiceDAO();
+    private final RequestServiceDAO requestServiceDAO = new RequestServiceDAO();
+    private final RequestMechanicsDAO requestMechanicsDAO = new RequestMechanicsDAO();
 
 
     
@@ -135,6 +148,70 @@ public class CarServiceLogic {
         requestDAO.updateRequest(request);
     }
     
+    public void conductDiagnostics2(Request request) {
+        if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
+        if (request.getMasterId() == null) throw new IllegalStateException("Мастер-приемщик не назначен");
+        if (!"Новая заявка".equalsIgnoreCase(request.getStatus())) throw new IllegalStateException("Диагностика проводится только для новых заявок");
+        if ("сервисное обслуживание".equalsIgnoreCase(request.getReason())) throw new IllegalStateException("Диагностика не требуется для сервисного обслуживания");
+
+        // 1. Сгенерировать найденные поломки (детали)
+        CarPartsGenerator generator = new CarPartsGenerator();
+        List<Part> breakdownParts = generator.generatePartsForServices();
+
+        // 2. Сохранить детали к заявке
+        for (Part part : breakdownParts) {
+            requestPartDAO.addRequestPart(new RequestPart(request.getRequestId(), part.getId()));
+        }
+
+        // 3. Если поломок нет, сохранить результат и статус
+        if (breakdownParts.isEmpty()) {
+            request.setDiagnosticResult("Неисправностей не обнаружено.");
+            request.setStatus("Диагностика");
+            if (!requestDAO.updateRequest(request)) {
+                throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
+            }
+            return;
+        }
+
+        // 4. Привязка услуг к заявке
+        List<Service> allServices = serviceDAO.getAllServices();
+        Set<String> usedSubcategories = new HashSet<>();
+        for (Part part : breakdownParts) 
+            usedSubcategories.add(part.getSubcategory());
+        
+        Map<String, Service> subcategoryToService = new HashMap<>();
+        for (String subcat : usedSubcategories) {
+            for (Service serv : allServices) {
+                if (serv.getSubcategory().equalsIgnoreCase(subcat)) {
+                    subcategoryToService.put(subcat, serv);
+                    requestServiceDAO.addRequestService(new RequestService(request.getRequestId(), serv.getId()));
+                    break;
+                }
+            }
+        }
+
+        // 5. Назначение механиков по ролям (уникальные роли)
+        Set<String> assignedRoles = new HashSet<>();
+        for (Service service : subcategoryToService.values()) {
+            String mechanicRole = service.getRequiredMechanicRole();
+            if (!assignedRoles.contains(mechanicRole)) {
+                List<Employee> mechanics = employeeDAO.getEmployeesByRole(mechanicRole);
+                if (!mechanics.isEmpty()) {
+                    Employee mechanic = mechanics.get(random.nextInt(mechanics.size()));
+                    requestMechanicsDAO.addMechanicToRequest(request.getRequestId(), mechanic.getId());
+                }
+                assignedRoles.add(mechanicRole);
+            }
+        }
+
+        // 6. Сохраняем результат и статус
+        request.setDiagnosticResult("Обнаружены неисправности"); 
+        request.setStatus("Диагностика");
+        if (!requestDAO.updateRequest(request)) {
+            throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
+        }
+    }
+    
     public void conductMaintenance(Request request) {
         if (request.getMasterId() == null) {
             throw new IllegalStateException("Мастер-приёмщик не назначен, обслуживание невозможно.");
@@ -167,6 +244,35 @@ public class CarServiceLogic {
         request.setStatus("Сервисное обслуживание");
         requestDAO.updateRequest(request);
     }
+    
+
+    
+    public void conductRepair(Request request) {
+        if (request == null || request.getRequestId() <= 0) {
+            throw new IllegalArgumentException("Заявка недействительна");
+        }
+        if (!"Диагностика".equalsIgnoreCase(request.getStatus())) {
+            throw new IllegalStateException("Ремонт можно проводить только после диагностики.");
+        }
+
+        // Проверка наличия назначенных автослесарей
+        RequestMechanicsDAO mechanicsDAO = new RequestMechanicsDAO();
+        List<Integer> mechanicIds = mechanicsDAO.getMechanicsForRequest(request.getRequestId());
+        if (mechanicIds == null || mechanicIds.isEmpty()) {
+            throw new IllegalStateException("Для ремонта должен быть назначен хотя бы один автослесарь.");
+        }
+
+        request.setStatus("Ремонт");
+        boolean updated = requestDAO.updateRequest(request);
+        if (!updated) {
+            throw new RuntimeException("Не удалось обновить статус заявки на ремонт с ID: " + request.getRequestId());
+        }
+        System.out.println("Ремонт начат для заявки с ID: " + request.getRequestId());
+    }
+    
+    
+    
+
     
     
     
