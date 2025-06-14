@@ -17,8 +17,8 @@ import mephi.b22901.ae.exam.Request;
 public class RequestDAO {
     
     public int addRequest(Request request) {
-        String sql = "INSERT INTO Requests (client_id, reason, status, diagnostic_result, master_id, mechanic_id, work_result) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING request_id";
+        String sql = "INSERT INTO Requests (client_id, reason, status, diagnostic_result, master_id, work_result) " +
+                     "VALUES (?, ?, ?, ?, ?, ?) RETURNING request_id";
         try (
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)
@@ -27,18 +27,14 @@ public class RequestDAO {
             stmt.setString(2, request.getReason());
             stmt.setString(3, request.getStatus());
             stmt.setString(4, request.getDiagnosticResult());
-            // master_id и mechanic_id могут быть null, если еще не назначены:
+            // master_id может быть null, если еще не назначены:
             if (request.getMasterId() != null) {
                 stmt.setInt(5, request.getMasterId());
             } else {
                 stmt.setNull(5, java.sql.Types.INTEGER);
             }
-            if (request.getMechanicId() != null) {
-                stmt.setInt(6, request.getMechanicId());
-            } else {
-                stmt.setNull(6, java.sql.Types.INTEGER);
-            }
-            stmt.setString(7, request.getWorkResult());
+            
+            stmt.setString(6, request.getWorkResult());
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -53,7 +49,7 @@ public class RequestDAO {
     }
     
     public Request getRequestById(int requestId) {
-        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, mechanic_id, work_result " +
+        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result " +
                      "FROM Requests WHERE request_id = ?";
         try (
             Connection conn = DBConnection.getConnection();
@@ -71,7 +67,6 @@ public class RequestDAO {
                         rs.getString("diagnostic_result"),
                         // для nullable FK используем getObject с Integer.class
                         (Integer)rs.getObject("master_id", Integer.class),
-                        (Integer)rs.getObject("mechanic_id", Integer.class),
                         rs.getString("work_result")
                     );
                 } else {
@@ -87,7 +82,7 @@ public class RequestDAO {
     
     public List<Request> getAllRequests() {
         List<Request> requests = new ArrayList<>();
-        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, mechanic_id, work_result FROM Requests";
+        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result FROM Requests";
         try (
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -101,7 +96,6 @@ public class RequestDAO {
                     rs.getString("status"),
                     rs.getString("diagnostic_result"),
                     (Integer) rs.getObject("master_id", Integer.class),
-                    (Integer) rs.getObject("mechanic_id", Integer.class),
                     rs.getString("work_result")
                 );
                 requests.add(request);
@@ -115,7 +109,7 @@ public class RequestDAO {
     
     public List<Request> getRequestsByClientId(int clientId) {
         List<Request> requests = new ArrayList<>();
-        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, mechanic_id, work_result " +
+        String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result " +
                      "FROM Requests WHERE client_id = ?";
         try (
             Connection conn = DBConnection.getConnection();
@@ -131,7 +125,6 @@ public class RequestDAO {
                         rs.getString("status"),
                         rs.getString("diagnostic_result"),
                         (Integer) rs.getObject("master_id", Integer.class),
-                        (Integer) rs.getObject("mechanic_id", Integer.class),
                         rs.getString("work_result")
                     );
                     requests.add(request);
@@ -146,7 +139,7 @@ public class RequestDAO {
     
     public boolean updateRequest(Request request) {
         String sql = "UPDATE Requests SET " + "reason = ?, " +"status = ?, " +
-                     "diagnostic_result = ?, " +  "master_id = ?, " + "mechanic_id = ?, " +
+                     "diagnostic_result = ?, " +  "master_id = ?, "  +
                 "work_result = ? " +  "WHERE request_id = ?";
         try (
             Connection conn = DBConnection.getConnection();
@@ -160,13 +153,8 @@ public class RequestDAO {
             } else {
                 stmt.setNull(4, java.sql.Types.INTEGER);
             }
-            if (request.getMechanicId() != null) {
-                stmt.setInt(5, request.getMechanicId());
-            } else {
-                stmt.setNull(5, java.sql.Types.INTEGER);
-            }
-            stmt.setString(6, request.getWorkResult());
-            stmt.setInt(7, request.getRequestId());
+            stmt.setString(5, request.getWorkResult());
+            stmt.setInt(6, request.getRequestId());
 
             int rows = stmt.executeUpdate();
             return rows > 0;

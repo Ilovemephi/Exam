@@ -20,7 +20,7 @@ public class CarMaintenanceGenerator {
     private final Random random = new Random();
     
     
-    public List<Part> generatePartsForMaintenance (List<Service> services) {
+    public List<Part> generatePartsForMaintenance () {
         List<Part> maintenanceParts = new ArrayList<>();
         List<Part> maintenancePartsTemp = new ArrayList<>();
         PartDAO partDAO = new PartDAO();

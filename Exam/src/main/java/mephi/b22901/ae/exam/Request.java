@@ -9,7 +9,6 @@ public class Request {
     private String status; 
     private String diagnosticResult; 
     private Integer masterId; 
-    private Integer mechanicId; 
     private String workResult; 
     
 
@@ -20,20 +19,18 @@ public class Request {
         this.status = status;
         this.diagnosticResult = null;
         this.masterId = null;
-        this.mechanicId = null;
         this.workResult = null;
     }
     
    
     public Request(int id, int clientId, String reason, String status, String diagnosticResult, 
-                   Integer masterId, Integer mechanicId, String workResult) {
+                   Integer masterId,  String workResult) {
         this.id = id;
         this.clientId = clientId;
         this.reason = reason;
         this.status = status;
         this.diagnosticResult = diagnosticResult;
         this.masterId = masterId;
-        this.mechanicId = mechanicId;
         this.workResult = workResult;
     }
     
@@ -62,9 +59,6 @@ public class Request {
         return masterId;
     }
     
-    public Integer getMechanicId() {
-        return mechanicId;
-    }
     
     public String getWorkResult() {
         return workResult;
@@ -95,9 +89,7 @@ public class Request {
         this.masterId = masterId;
     }
     
-    public void setMechanicId(Integer mechanicId) {
-        this.mechanicId = mechanicId;
-    }
+    
     
     public void setWorkResult(String workResult) {
         this.workResult = workResult;
@@ -107,6 +99,6 @@ public class Request {
     public String toString() {
         return "Request{id=" + id + ", clientId=" + clientId + ", reason='" + reason + "', status='" + status + 
                "', diagnosticResult='" + diagnosticResult + "', masterId=" + masterId + 
-               ", mechanicId=" + mechanicId + ", workResult='" + workResult + "'}";
+                ", workResult='" + workResult + "'}";
     }
 }
