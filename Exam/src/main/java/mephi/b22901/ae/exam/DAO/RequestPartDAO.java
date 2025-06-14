@@ -67,6 +67,31 @@ public class RequestPartDAO {
         }
         return requestIds;
     }
+    
+    
+    public List<RequestPart> getRequestPartsByRequestId(int requestId) {
+        List<RequestPart> requestParts = new ArrayList<>();
+        String sql = "SELECT request_id, part_id FROM Request_Parts WHERE request_id = ?";
+        try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, requestId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    RequestPart requestPart = new RequestPart(
+                        rs.getInt("request_id"),
+                        rs.getInt("part_id")
+                    );
+                    requestParts.add(requestPart);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Ошибка при получении деталей заявки #" + requestId, e);
+        }
+        return requestParts;
+    }
 
 
 }

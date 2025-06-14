@@ -68,6 +68,31 @@ public class RequestServiceDAO {
         return requestIds;
     }
     
+    
+    public List<RequestService> getRequestServicesByRequestId(int requestId) {
+        List<RequestService> requestServices = new ArrayList<>();
+        String sql = "SELECT request_id, service_id FROM Requests_Services WHERE request_id = ?";
+        try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, requestId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    RequestService requestService = new RequestService(
+                        rs.getInt("request_id"),
+                        rs.getInt("service_id")
+                    );
+                    requestServices.add(requestService);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Ошибка при получении услуг заявки #" + requestId, e);
+        }
+        return requestServices;
+    }
+    
 
     
 }

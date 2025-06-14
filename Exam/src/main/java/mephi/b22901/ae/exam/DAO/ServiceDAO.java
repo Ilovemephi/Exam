@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mephi.b22901.ae.exam.Connection.DBConnection;
+import mephi.b22901.ae.exam.RequestService;
 import mephi.b22901.ae.exam.Service;
 
 /**
@@ -69,6 +70,10 @@ public class ServiceDAO {
             throw new RuntimeException("Ошибка при получении услуги по id", e);
         }
     }
+    
+    
+    
+    
 
     
     

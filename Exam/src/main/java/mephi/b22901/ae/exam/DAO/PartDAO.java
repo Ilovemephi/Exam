@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mephi.b22901.ae.exam.Connection.DBConnection;
 import mephi.b22901.ae.exam.Part;
+import mephi.b22901.ae.exam.RequestPart;
 
 /**
  *
@@ -68,6 +69,9 @@ public class PartDAO {
             throw new RuntimeException("Ошибка при получении детали по id", e);
         }
     }
+    
+    
+    
 
     
     
