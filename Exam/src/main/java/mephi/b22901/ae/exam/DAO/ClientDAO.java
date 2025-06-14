@@ -20,7 +20,7 @@ import mephi.b22901.ae.exam.Connection.DBConnection;
 public class ClientDAO {
     
     public int addClient(Client client) {
-        String sql = "INSERT INTO Clients (full_name, phone_number, car_number) VALUES (?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO Clients (full_name, phone_number, car_number) VALUES (?, ?, ?) RETURNING client_id";
         try (
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)
@@ -30,7 +30,7 @@ public class ClientDAO {
             stmt.setString(3, client.getCarNumber());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("id"); 
+                return rs.getInt("client_id"); 
             } else {
                 throw new SQLException("Не удалось получить id нового клиента");
             }
@@ -41,7 +41,7 @@ public class ClientDAO {
     }
     
     public Client getClientById(int id) {
-        String sql = "SELECT * FROM Clients WHERE id = ?";
+        String sql = "SELECT * FROM Clients WHERE client_id = ?";
         try (
             Connection conn = DBConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)
@@ -50,7 +50,7 @@ public class ClientDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Client(
-                    rs.getInt("id"), rs.getString("full_name"), rs.getString("phone_number"),rs.getString("car_number"));
+                    rs.getInt("client_id"), rs.getString("full_name"), rs.getString("phone_number"),rs.getString("car_number"));
             } else {
                 return null; 
             }
@@ -71,7 +71,7 @@ public class ClientDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Client(
-                    rs.getInt("id"),
+                    rs.getInt("client_id"),
                     rs.getString("full_name"),
                     rs.getString("phone_number"),
                     rs.getString("car_number")
@@ -96,7 +96,7 @@ public class ClientDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Client(
-                    rs.getInt("id"),
+                    rs.getInt("client_id"),
                     rs.getString("full_name"),
                     rs.getString("phone_number"),
                     rs.getString("car_number")
@@ -120,7 +120,7 @@ public class ClientDAO {
         ) {
             while (rs.next()) {
                 Client client = new Client(
-                    rs.getInt("id"),
+                    rs.getInt("client_id"),
                     rs.getString("full_name"),
                     rs.getString("phone_number"),
                     rs.getString("car_number")
@@ -135,7 +135,7 @@ public class ClientDAO {
     }
     
     public boolean updateClient(Client client) {
-        String sql = "UPDATE Clients SET full_name = ?, phone_number = ?, car_number = ? WHERE id = ?";
+        String sql = "UPDATE Clients SET full_name = ?, phone_number = ?, car_number = ? WHERE client_id = ?";
         try ( Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, client.getFullName());
             stmt.setString(2, client.getPhoneNumber());
