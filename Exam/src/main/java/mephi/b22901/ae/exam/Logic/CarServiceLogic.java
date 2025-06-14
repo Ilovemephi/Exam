@@ -5,16 +5,12 @@
 package mephi.b22901.ae.exam.Logic;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 import mephi.b22901.ae.exam.Client;
 import mephi.b22901.ae.exam.DAO.ClientDAO;
 import mephi.b22901.ae.exam.DAO.EmployeeDAO;
@@ -96,6 +92,7 @@ public class CarServiceLogic {
         }
 
         Request request = new Request(clientId, reason, "Новая заявка");
+        request.setWorkResult("Работа не выполнена");
         int requestId = requestDAO.addRequest(request);
         Request createdRequest = requestDAO.getRequestById(requestId);
         if (createdRequest == null) {
@@ -318,6 +315,7 @@ public class CarServiceLogic {
         System.out.println("Счёт сохранён в файл: " + file.getAbsolutePath());
         // 5. Обновление статуса заявки
         request.setStatus("Выполнена");
+        request.setWorkResult("Работа выполнена");
         if (!requestDAO.updateRequest(request)) {
             throw new RuntimeException("Не удалось обновить статус заявки #" + request.getRequestId());
         }
@@ -326,14 +324,28 @@ public class CarServiceLogic {
     
 
     private void saveInvoiceToTxt(Invoice invoice, java.io.File file) throws IOException {
-    try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {
-        writer.write("Счёт #" + invoice.getId());
-        writer.write("\nКлиент: " + new ClientDAO().getClientById(invoice.getClientId()).getFullName());
-        writer.write("\nМастер: " + new EmployeeDAO().getEmployeeById(invoice.getMasterId()).getFullName());
-        writer.write("\nОбщая стоимость: " + invoice.getTotalAmount() + " руб.");
- 
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {
+            writer.write("Счёт #" + invoice.getId());
+            writer.write("\nКлиент: " + new ClientDAO().getClientById(invoice.getClientId()).getFullName());
+            writer.write("\nМастер: " + new EmployeeDAO().getEmployeeById(invoice.getMasterId()).getFullName());
+            writer.write("\nОбщая стоимость: " + invoice.getTotalAmount() + " руб.");
+
+        }
     }
-}
+    
+    public List<Request> getAllRequests() {
+        return requestDAO.getAllRequests();
+    }
+
+    public Client getClientById(int clientId) {
+        return clientDAO.getClientById(clientId);
+    }
+
+    public Request getRequestById(int requestId) {
+        return requestDAO.getRequestById(requestId); 
+    }
+    
+    
     
     
     
