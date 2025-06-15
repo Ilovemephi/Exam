@@ -137,20 +137,23 @@ public class RequestModerationFrame extends JFrame {
                 }
             });
             panel.add(assignMechanicBtn);
+            
             }
-
-            JButton doWorkBtn = new JButton("Провести работу");
-            doWorkBtn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //performWork();
-                }
-            });
-            panel.add(doWorkBtn);
-        } else if ("Проведена работа".equalsIgnoreCase(status)) {
+            
+            if (!"Проведена работа".equalsIgnoreCase(status)){
+                JButton doWorkBtn = new JButton("Провести работу");
+                doWorkBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        performWork();
+                    }
+                });
+                panel.add(doWorkBtn);
+            }
+        } else if ("Проведена работа".equalsIgnoreCase(status) || "Проведено обслуживание".equalsIgnoreCase(status)) {
             JButton viewInvoiceBtn = new JButton("Просмотреть счёт");
             viewInvoiceBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    //viewInvoice();
+                    viewInvoice();
                 }
             });
             panel.add(viewInvoiceBtn);
@@ -166,7 +169,7 @@ public class RequestModerationFrame extends JFrame {
         CarServiceLogic logic = new CarServiceLogic();
         logic.assignMaster(request);
         JOptionPane.showMessageDialog(this, "Мастер назначен");
-        dispose(); // можно перезапустить окно для обновления
+        dispose(); 
         }
     }
 
@@ -199,15 +202,20 @@ public class RequestModerationFrame extends JFrame {
         dispose();
     }
 
-//    private void performWork() {
-//        CarServiceLogic logic = new CarServiceLogic();
-//        logic.performRepair(request); // твоя реализация
-//        JOptionPane.showMessageDialog(this, "Работа проведена");
-//        dispose();
-//    }
-//
-//    private void viewInvoice() {
-//        new InvoiceFrame(request); // реализуется отдельно
-//    }
+    private void performWork() {
+        CarServiceLogic logic = new CarServiceLogic();
+        logic.performWork(request); 
+        JOptionPane.showMessageDialog(this, "Работа проведена");
+        dispose();
+    }
+
+    private void viewInvoice() {
+         CarServiceLogic logic = new CarServiceLogic(); // Создаём экземпляр логики (пока так, позже оптимизируем)
+        try {
+            new InvoiceFrame(logic, request, client, employeeDAO).setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Произошла ошибка при просмотре счёта", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
 }

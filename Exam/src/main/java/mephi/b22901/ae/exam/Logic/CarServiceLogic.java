@@ -324,16 +324,17 @@ public class CarServiceLogic {
         }
         // Меняем статус заявки
         request.setStatus("Проведено обслуживание");
+        request.setWorkResult("Работы выполнены");
         requestDAO.updateRequest(request);
     }
     
 
     
-    public void conductRepair(Request request) {
+    public void performWork(Request request) {
         if (request == null || request.getRequestId() <= 0) {
             throw new IllegalArgumentException("Заявка недействительна");
         }
-        if (!"Диагностика".equalsIgnoreCase(request.getStatus())) {
+        if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) {
             throw new IllegalStateException("Ремонт можно проводить только после диагностики.");
         }
 
@@ -343,72 +344,81 @@ public class CarServiceLogic {
         if (mechanicIds == null || mechanicIds.isEmpty()) {
             throw new IllegalStateException("Для ремонта должен быть назначен хотя бы один автослесарь.");
         }
+        
+        System.out.println("=== Начало проведения работы для заявки # " + request.getRequestId() + " ===");
 
-        request.setStatus("Ремонт");
+        request.setStatus("Проведена работа");
+        request.setWorkResult("Работы выполнены");
         boolean updated = requestDAO.updateRequest(request);
         if (!updated) {
             throw new RuntimeException("Не удалось обновить статус заявки на ремонт с ID: " + request.getRequestId());
         }
-        System.out.println("Ремонт начат для заявки с ID: " + request.getRequestId());
+        
+        System.out.println("=== Работа завершена ===");
     }
     
     
-    public void completeRequest(Request request, java.io.File file) throws IOException {
+    public Invoice viewInvoice(Request request) throws IOException {
         if (request == null || request.getRequestId() <= 0) {
             throw new IllegalArgumentException("Заявка недействительна");
         }
-        if (!"Ремонт".equalsIgnoreCase(request.getStatus()) && !("Диагностика".equalsIgnoreCase(request.getStatus()) && "сервисное обслуживание".equalsIgnoreCase(request.getReason()))) {
+        if (!"Проведена работа".equalsIgnoreCase(request.getStatus()) && !("Проведено обслуживание".equalsIgnoreCase(request.getStatus()))) {
             throw new IllegalStateException("Завершение возможно только для заявок в статусе 'Ремонт' или 'Диагностика' с причиной 'сервисное обслуживание'.");
         }
+        
+        System.out.println("=== Просмтор счета для заявки #" + request.getRequestId() + " ===");
+        
 
         // 1. Расчёт общей стоимости
         double totalCost = 0.0;
         List<RequestPart> requestParts = requestPartDAO.getRequestPartsByRequestId(request.getRequestId());
         List<RequestService> requestServices = requestServiceDAO.getRequestServicesByRequestId(request.getRequestId());
+        System.out.println("Детали: ");
         for (RequestPart rp : requestParts) {
             Part part = new PartDAO().getPartById(rp.getPartId());
             if (part != null) {
                 totalCost += part.getPrice();
+                System.out.println("   - " + part.getName() + " (Цена: " + part.getPrice() + ")");
             }
         }
+        
+        System.out.println("Услуги: ");
         for (RequestService rs : requestServices) {
             Service service = new ServiceDAO().getServiceById(rs.getServiceId());
             if (service != null) {
                 totalCost += service.getPrice();
+                System.out.println("   - " + service.getCategory() + ": " + service.getSubcategory() + "Цена: " + service.getPrice());
             }
         }
-        // 2. Проверка наличия автослесарей для ремонта
-        if ("Ремонт".equalsIgnoreCase(request.getStatus())) {
-            RequestMechanicsDAO mechanicsDAO = new RequestMechanicsDAO();
-            List<Integer> mechanicIds = mechanicsDAO.getMechanicsForRequest(request.getRequestId());
-            if (mechanicIds == null || mechanicIds.isEmpty()) {
-                throw new IllegalStateException("Для завершения ремонта должен быть назначен хотя бы один автослесарь.");
-            }
-        }
+        
+        System.out.println("Общая стоимость: " + totalCost);
+        
+//        // 2. Проверка наличия автослесарей для ремонта
+//        if ("Ремонт".equalsIgnoreCase(request.getStatus())) {
+//            RequestMechanicsDAO mechanicsDAO = new RequestMechanicsDAO();
+//            List<Integer> mechanicIds = mechanicsDAO.getMechanicsForRequest(request.getRequestId());
+//            if (mechanicIds == null || mechanicIds.isEmpty()) {
+//                throw new IllegalStateException("Для завершения ремонта должен быть назначен хотя бы один автослесарь.");
+//            }
+//        }
+
         // 3. Создание счёта
         InvoiceDAO invoiceDAO = new InvoiceDAO();
         Invoice invoice = new Invoice(request.getRequestId(), request.getClientId(), request.getMasterId(), (int) totalCost);
         int invoiceId = invoiceDAO.addInvoice(invoice);
-        // 4. Сохранение счёта в файл
-        saveInvoiceToTxt(invoice, file);
-        System.out.println("Счёт сохранён в файл: " + file.getAbsolutePath());
-        // 5. Обновление статуса заявки
-        request.setStatus("Выполнена");
-        request.setWorkResult("Работа выполнена");
-        if (!requestDAO.updateRequest(request)) {
-            throw new RuntimeException("Не удалось обновить статус заявки #" + request.getRequestId());
-        }
-        System.out.println("Заявка #" + request.getRequestId() + " завершена. Общая стоимость: " + totalCost);
+        System.out.println("Счёт создан. ID: " + invoiceId);
+        System.out.println("===================");
+        
+        return invoice;
     }
     
 
-    private void saveInvoiceToTxt(Invoice invoice, java.io.File file) throws IOException {
+    public void saveInvoiceToTxt(Invoice invoice, java.io.File file) throws IOException {
         try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {
             writer.write("Счёт #" + invoice.getId());
             writer.write("\nКлиент: " + new ClientDAO().getClientById(invoice.getClientId()).getFullName());
             writer.write("\nМастер: " + new EmployeeDAO().getEmployeeById(invoice.getMasterId()).getFullName());
             writer.write("\nОбщая стоимость: " + invoice.getTotalAmount() + " руб.");
-
         }
     }
     
