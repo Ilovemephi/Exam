@@ -216,30 +216,68 @@ public class CarServiceLogic {
             }
         }
 
-        // 5. Назначение механиков по ролям (уникальные роли)
+//        // 5. Назначение механиков по ролям (уникальные роли)
+//        Set<String> assignedRoles = new HashSet<>();
+//        for (Service service : subcategoryToService.values()) {
+//            String mechanicRole = service.getRequiredMechanicRole();
+//            if (!assignedRoles.contains(mechanicRole)) {
+//                List<Employee> mechanics = employeeDAO.getEmployeesByRole(mechanicRole);
+//                if (!mechanics.isEmpty()) {
+//                    Employee mechanic = mechanics.get(random.nextInt(mechanics.size()));
+//                    requestMechanicsDAO.addMechanicToRequest(request.getRequestId(), mechanic.getId());
+//                    
+//                    System.out.println("   - Назначен мастер: " + mechanic.getFullName() + " (Роль: " + mechanicRole + ")");
+//                    
+//                }
+//                assignedRoles.add(mechanicRole);
+//            }
+//        }
+
+        // 6. Сохраняем результат и статус
+        request.setDiagnosticResult("Обнаружены неисправности"); 
+        request.setStatus("Проведена диагностика");
+        if (!requestDAO.updateRequest(request)) {
+            throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
+        }
+    }
+    
+    
+    
+    
+    
+    public void assignMechanic(Request request) {
+        if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
+        if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) throw new IllegalStateException("Назначение механиков возможно только после диагностики");
+        System.out.println("=== Начало назначения механиков для заявки #" + request.getRequestId() + " ===");
+
+        List<RequestService> requestServices = requestServiceDAO.getRequestServicesByRequestId(request.getRequestId());
+        if (requestServices.isEmpty()) {
+            System.out.println("   - Нет привязанных услуг, механики не требуются.");
+            return;
+        }
+
         Set<String> assignedRoles = new HashSet<>();
-        for (Service service : subcategoryToService.values()) {
+        for (RequestService rs : requestServices) {
+            Service service = serviceDAO.getServiceById(rs.getServiceId());
             String mechanicRole = service.getRequiredMechanicRole();
             if (!assignedRoles.contains(mechanicRole)) {
                 List<Employee> mechanics = employeeDAO.getEmployeesByRole(mechanicRole);
                 if (!mechanics.isEmpty()) {
                     Employee mechanic = mechanics.get(random.nextInt(mechanics.size()));
                     requestMechanicsDAO.addMechanicToRequest(request.getRequestId(), mechanic.getId());
-                    
                     System.out.println("   - Назначен мастер: " + mechanic.getFullName() + " (Роль: " + mechanicRole + ")");
-                    
+                } else {
+                    System.out.println("   - Нет доступных мастеров для роли: " + mechanicRole);
                 }
                 assignedRoles.add(mechanicRole);
             }
         }
-
-        // 6. Сохраняем результат и статус
-        request.setDiagnosticResult("Обнаружены неисправности"); 
-        request.setStatus(" Проведена диагностика");
-        if (!requestDAO.updateRequest(request)) {
-            throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
-        }
+        System.out.println("=== Назначение механиков завершено ===");
     }
+    
+    
+    
+    
     
     public void conductMaintenance(Request request) {
         if (request.getMasterId() == null) {

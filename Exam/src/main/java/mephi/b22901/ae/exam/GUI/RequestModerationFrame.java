@@ -124,11 +124,11 @@ public class RequestModerationFrame extends JFrame {
             });
             panel.add(conductMaintenanceBtn);
         }
-        } else if ("Диагностика".equalsIgnoreCase(status)) {
+        } else if ("Проведена диагностика".equalsIgnoreCase(request.getStatus())) {
             JButton assignMechanicBtn = new JButton("Назначить автослесаря");
             assignMechanicBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    //assignMechanic();
+                    assignMechanic();
                 }
             });
             panel.add(assignMechanicBtn);
@@ -186,13 +186,13 @@ public class RequestModerationFrame extends JFrame {
        }
    }
 
-//    private void assignMechanic() {
-//        CarServiceLogic logic = new CarServiceLogic();
-//        logic.assignMechanic(request); // твоя реализация
-//        JOptionPane.showMessageDialog(this, "Автослесарь назначен");
-//        dispose();
-//    }
-//
+    private void assignMechanic() {
+        CarServiceLogic logic = new CarServiceLogic();
+        logic.assignMechanic(request); 
+        JOptionPane.showMessageDialog(this, "Автослесарь назначен");
+        dispose();
+    }
+
 //    private void performWork() {
 //        CarServiceLogic logic = new CarServiceLogic();
 //        logic.performRepair(request); // твоя реализация
