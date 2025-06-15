@@ -161,16 +161,35 @@ public class CarServiceLogic {
         // 1. Сгенерировать найденные поломки (детали)
         CarPartsGenerator generator = new CarPartsGenerator();
         List<Part> breakdownParts = generator.generatePartsForServices();
+        
+        
+        
+        
+        System.out.println("1. Сгенерированы поломки: ");
+        if (breakdownParts.isEmpty()) {
+            System.out.println("   - Нет поломок.");
+        } else {
+            for (int i = 0; i < breakdownParts.size(); i++) {
+                Part part = breakdownParts.get(i);
+                System.out.println("   - " + (i + 1) + ". " + part.getName() + " (Категория: " + part.getCategory() + ", Подкатегория: " + part.getSubcategory() + ", Цена: " + part.getPrice() + ")");
+            }
+        }
+        
+        
+        
+        
 
         // 2. Сохранить детали к заявке
         for (Part part : breakdownParts) {
             requestPartDAO.addRequestPart(new RequestPart(request.getRequestId(), part.getId()));
+            System.out.println("   - Сохранена деталь: " + part.getName() + " (ID: " + part.getId() + ")");
         }
 
         // 3. Если поломок нет, сохранить результат и статус
         if (breakdownParts.isEmpty()) {
+            System.out.println("Поломок нет");
             request.setDiagnosticResult("Неисправностей не обнаружено.");
-            request.setStatus("Диагностика");
+            request.setStatus("Проведена диагностика");
             if (!requestDAO.updateRequest(request)) {
                 throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
             }
@@ -189,6 +208,9 @@ public class CarServiceLogic {
                 if (serv.getSubcategory().equalsIgnoreCase(subcat)) {
                     subcategoryToService.put(subcat, serv);
                     requestServiceDAO.addRequestService(new RequestService(request.getRequestId(), serv.getId()));
+                    
+                    System.out.println("   - Привязана услуга: " + serv.getCategory() + " (Подкатегория: " + serv.getSubcategory() + ", Цена: " + serv.getPrice() + ", Роль мастера: " + serv.getRequiredMechanicRole() + ")");
+                    
                     break;
                 }
             }
@@ -203,6 +225,9 @@ public class CarServiceLogic {
                 if (!mechanics.isEmpty()) {
                     Employee mechanic = mechanics.get(random.nextInt(mechanics.size()));
                     requestMechanicsDAO.addMechanicToRequest(request.getRequestId(), mechanic.getId());
+                    
+                    System.out.println("   - Назначен мастер: " + mechanic.getFullName() + " (Роль: " + mechanicRole + ")");
+                    
                 }
                 assignedRoles.add(mechanicRole);
             }
@@ -210,7 +235,7 @@ public class CarServiceLogic {
 
         // 6. Сохраняем результат и статус
         request.setDiagnosticResult("Обнаружены неисправности"); 
-        request.setStatus("Диагностика");
+        request.setStatus(" Проведена диагностика");
         if (!requestDAO.updateRequest(request)) {
             throw new RuntimeException("Не удалось обновить заявку #" + request.getRequestId());
         }
@@ -245,7 +270,7 @@ public class CarServiceLogic {
             System.out.println();
         }
         // Меняем статус заявки
-        request.setStatus("Сервисное обслуживание");
+        request.setStatus("Проведено обслуживание");
         requestDAO.updateRequest(request);
     }
     

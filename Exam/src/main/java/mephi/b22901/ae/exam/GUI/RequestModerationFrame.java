@@ -109,10 +109,21 @@ public class RequestModerationFrame extends JFrame {
             JButton startDiagBtn = new JButton("Провести диагностику");
             startDiagBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    //conductDiagnostics();
+                    conductDiagnostics();
                 }
             });
-            panel.add(startDiagBtn);
+            if (!"Сервисное обслуживание".equalsIgnoreCase(request.getReason())) {
+                panel.add(startDiagBtn);
+            }
+            if ("Сервисное обслуживание".equalsIgnoreCase(request.getReason())) {
+            JButton conductMaintenanceBtn = new JButton("Провести сервисное обслуживание");
+            conductMaintenanceBtn.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    conductMaintenance();
+                }
+            });
+            panel.add(conductMaintenanceBtn);
+        }
         } else if ("Диагностика".equalsIgnoreCase(status)) {
             JButton assignMechanicBtn = new JButton("Назначить автослесаря");
             assignMechanicBtn.addActionListener(new ActionListener() {
@@ -153,16 +164,27 @@ public class RequestModerationFrame extends JFrame {
         }
     }
 
-//    private void conductDiagnostics() {
-//        CarServiceLogic logic = new CarServiceLogic();
-//        try {
-//            logic.conductDiagnostics(request);
-//            JOptionPane.showMessageDialog(this, "Диагностика завершена");
-//            dispose();
-//        } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(this, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
+    private void conductDiagnostics() {
+        CarServiceLogic logic = new CarServiceLogic();
+        try {
+            logic.conductDiagnostics2(request);
+            JOptionPane.showMessageDialog(this, "Диагностика завершена");
+            dispose();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+   private void conductMaintenance() {
+       CarServiceLogic logic = new CarServiceLogic();
+       try {
+           logic.conductMaintenance(request);
+           JOptionPane.showMessageDialog(this, "Сервисное обслуживание проведено");
+           dispose(); 
+       } catch(Exception ex) {
+           JOptionPane.showMessageDialog(this, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+       }
+   }
 
 //    private void assignMechanic() {
 //        CarServiceLogic logic = new CarServiceLogic();
