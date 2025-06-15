@@ -152,7 +152,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
         try {
             Invoice invoice = logic.viewInvoice(request);
             DefaultTableModel model = (DefaultTableModel) InvoiceTable.getModel();
-            model.setRowCount(0); // Очищаем таблицу
+            model.setRowCount(0); 
 
             // Получение списка деталей
             List<RequestPart> requestParts = new RequestPartDAO().getRequestPartsByRequestId(request.getRequestId());
@@ -198,7 +198,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
                 invoice.getTotalAmount() + " руб."
             });
 
-            setTitle("Счёт #" + invoice.getId()); // Обновляем заголовок
+            setTitle("Счёт #" + invoice.getId()); 
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Ошибка при создании счёта: " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         }

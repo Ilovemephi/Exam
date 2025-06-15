@@ -141,13 +141,15 @@ public class RequestModerationFrame extends JFrame {
             }
             
             if (!"Проведена работа".equalsIgnoreCase(status)){
-                JButton doWorkBtn = new JButton("Провести работу");
-                doWorkBtn.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        performWork();
-                    }
-                });
-                panel.add(doWorkBtn);
+                if (!mechanicIds.isEmpty()){
+                    JButton doWorkBtn = new JButton("Провести работу");
+                    doWorkBtn.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            performWork();
+                        }
+                    });
+                    panel.add(doWorkBtn);
+                }
             }
         } else if ("Проведена работа".equalsIgnoreCase(status) || "Проведено обслуживание".equalsIgnoreCase(status)) {
             JButton viewInvoiceBtn = new JButton("Просмотреть счёт");
@@ -217,5 +219,8 @@ public class RequestModerationFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Произошла ошибка при просмотре счёта", "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    
+    
     
 }
