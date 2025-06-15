@@ -133,7 +133,7 @@ public class RequestListFrame extends javax.swing.JFrame {
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         List<Request> requests = carServiceLogic.getAllRequests();
         DefaultTableModel model = (DefaultTableModel) requestsTable.getModel();
-        model.setRowCount(0); // Очищаем старую таблицу
+        model.setRowCount(0); 
         for (Request request : requests) {
             Client client = carServiceLogic.getClientById(request.getClientId());
             model.addRow(new Object[]{
@@ -152,7 +152,7 @@ public class RequestListFrame extends javax.swing.JFrame {
             int requestId = (int) requestsTable.getValueAt(selectedRow, 0); 
             Request request = carServiceLogic.getRequestById(requestId); 
             if (request != null) {
-                // Пока выводим сообщение, позже откроем RequestModerationFrame
+        
                 new RequestModerationFrame(request).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Заявка не найдена!", "Ошибка", JOptionPane.ERROR_MESSAGE);

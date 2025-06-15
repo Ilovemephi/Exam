@@ -32,7 +32,7 @@ public class RequestServiceDAO {
         }
     }
 
-    // Получить список всех услуг по конкретной заявке
+   
     public List<Integer> getServiceIdsByRequestId(int requestId) {
         String sql = "SELECT service_id FROM Requests_Services WHERE request_id = ?";
         List<Integer> serviceIds = new ArrayList<>();

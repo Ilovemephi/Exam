@@ -48,32 +48,7 @@ public class CarServiceLogic {
     private final RequestMechanicsDAO requestMechanicsDAO = new RequestMechanicsDAO();
 
 
-    
-//    public Request createNewRequest(Client client) {
-//        Client dbClient = clientDAO.getClientByPhone(client.getPhoneNumber());
-//        int clientId;
-//        if (dbClient == null) {
-//            clientId = clientDAO.addClient(client);
-//        } else {
-//            clientId = dbClient.getId();
-//        }
-//
-//        boolean isService = random.nextBoolean();
-//        String reason;
-//        if (isService) {
-//            reason = "Сервисное обслуживание";
-//        } else {
-//            reason = "Поломка";
-//        }
-//
-//        String status = "Новая заявка";
-//
-//        Request request = new Request(clientId, reason, status);
-//        int requestId = requestDAO.addRequest(request);
-//        request.setId(requestId);
-//
-//        return request;
-//    }
+   
     
     
     public Request createNewRequest(Client client, String reason) {
@@ -216,22 +191,7 @@ public class CarServiceLogic {
             }
         }
 
-//        // 5. Назначение механиков по ролям (уникальные роли)
-//        Set<String> assignedRoles = new HashSet<>();
-//        for (Service service : subcategoryToService.values()) {
-//            String mechanicRole = service.getRequiredMechanicRole();
-//            if (!assignedRoles.contains(mechanicRole)) {
-//                List<Employee> mechanics = employeeDAO.getEmployeesByRole(mechanicRole);
-//                if (!mechanics.isEmpty()) {
-//                    Employee mechanic = mechanics.get(random.nextInt(mechanics.size()));
-//                    requestMechanicsDAO.addMechanicToRequest(request.getRequestId(), mechanic.getId());
-//                    
-//                    System.out.println("   - Назначен мастер: " + mechanic.getFullName() + " (Роль: " + mechanicRole + ")");
-//                    
-//                }
-//                assignedRoles.add(mechanicRole);
-//            }
-//        }
+
 
         // 6. Сохраняем результат и статус
         request.setDiagnosticResult("Обнаружены неисправности"); 
@@ -393,14 +353,7 @@ public class CarServiceLogic {
         
         System.out.println("Общая стоимость: " + totalCost);
         
-//        // 2. Проверка наличия автослесарей для ремонта
-//        if ("Ремонт".equalsIgnoreCase(request.getStatus())) {
-//            RequestMechanicsDAO mechanicsDAO = new RequestMechanicsDAO();
-//            List<Integer> mechanicIds = mechanicsDAO.getMechanicsForRequest(request.getRequestId());
-//            if (mechanicIds == null || mechanicIds.isEmpty()) {
-//                throw new IllegalStateException("Для завершения ремонта должен быть назначен хотя бы один автослесарь.");
-//            }
-//        }
+
 
         // 3. Создание счёта
         InvoiceDAO invoiceDAO = new InvoiceDAO();

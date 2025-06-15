@@ -18,7 +18,7 @@ import mephi.b22901.ae.exam.RequestPart;
  * @author artyom_egorkin
  */
 public class RequestPartDAO {
-    // Добавить связь между заявкой и деталью
+
     public void addRequestPart(RequestPart requestPart) {
         String sql = "INSERT INTO Request_Parts (request_id, part_id) VALUES (?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -32,7 +32,7 @@ public class RequestPartDAO {
         }
     }
 
-    // Получить список id деталей по заявке
+
     public List<Integer> getPartIdsByRequestId(int requestId) {
         List<Integer> partIds = new ArrayList<>();
         String sql = "SELECT part_id FROM Request_Parts WHERE request_id = ?";
@@ -50,7 +50,7 @@ public class RequestPartDAO {
         return partIds;
     }
 
-    // Получить список id заявок по детали
+   
     public List<Integer> getRequestIdsByPartId(int partId) {
         List<Integer> requestIds = new ArrayList<>();
         String sql = "SELECT request_id FROM Request_Parts WHERE part_id = ?";

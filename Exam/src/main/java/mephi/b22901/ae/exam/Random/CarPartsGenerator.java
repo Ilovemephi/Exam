@@ -41,7 +41,7 @@ public class CarPartsGenerator {
         List<String> subcategoriesList = new ArrayList<>(subcategories);
         List<String> selectedSubcategories = addCategories(85, subcategoriesList);
 
-        // 3. Для каждой выбранной подкатегории выбираем случайные детали (1 или 2)
+        // 3. Для каждой выбранной подкатегории выбираем случайные детали 
         for (String subcategory : selectedSubcategories) {
             List<Part> matchingParts = new ArrayList<>();
             for (Part part : allParts) {
