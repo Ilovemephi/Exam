@@ -249,6 +249,21 @@ public class CarServiceLogic {
         if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
         if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) throw new IllegalStateException("Назначение механиков возможно только после диагностики");
         System.out.println("=== Начало назначения механиков для заявки #" + request.getRequestId() + " ===");
+        
+        
+        // Проверка, назначены ли уже механики
+        List<Integer> existingMechanics = requestMechanicsDAO.getMechanicsForRequest(request.getRequestId());
+        if (!existingMechanics.isEmpty()) {
+            System.out.println("   - Механики уже назначены: " + existingMechanics.size() + " шт.");
+            for (Integer mechId : existingMechanics) {
+                Employee mechanic = employeeDAO.getEmployeeById(mechId);
+                if (mechanic != null) {
+                    System.out.println("   - Назначен: " + mechanic.getFullName());
+                }
+            }
+            return; // Прекращаем выполнение, если механики уже есть
+        }
+        
 
         List<RequestService> requestServices = requestServiceDAO.getRequestServicesByRequestId(request.getRequestId());
         if (requestServices.isEmpty()) {

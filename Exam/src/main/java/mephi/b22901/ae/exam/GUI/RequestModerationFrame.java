@@ -125,6 +125,11 @@ public class RequestModerationFrame extends JFrame {
             panel.add(conductMaintenanceBtn);
         }
         } else if ("Проведена диагностика".equalsIgnoreCase(request.getStatus())) {
+            
+            RequestMechanicsDAO rmDAO = new RequestMechanicsDAO();
+            List<Integer> mechanicIds = rmDAO.getMechanicsForRequest(request.getRequestId());
+            if (mechanicIds.isEmpty()) {
+    
             JButton assignMechanicBtn = new JButton("Назначить автослесаря");
             assignMechanicBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -132,6 +137,7 @@ public class RequestModerationFrame extends JFrame {
                 }
             });
             panel.add(assignMechanicBtn);
+            }
 
             JButton doWorkBtn = new JButton("Провести работу");
             doWorkBtn.addActionListener(new ActionListener() {
