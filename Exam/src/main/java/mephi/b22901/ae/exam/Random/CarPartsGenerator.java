@@ -9,11 +9,18 @@ import mephi.b22901.ae.exam.DAO.PartDAO;
 import java.util.*;
 import mephi.b22901.ae.exam.Part;
 
-
+/**
+ * КЛасс который ломает автомобиль 
+ * @author artyom_egorkin
+ */
 public class CarPartsGenerator {
 
     private final Random random = new Random();
 
+    /**
+     * Метод, который случайно ломает части автомобиля
+     * @return возвращает список поломок 
+     */
     public List<Part> generatePartsForServices() {
         List<Part> breakdownParts = new ArrayList<>();
         PartDAO partDAO = new PartDAO();
@@ -62,7 +69,13 @@ public class CarPartsGenerator {
 
         return breakdownParts;
     }
-
+    
+    /**
+     * Вспомогательный метод для выпадения случайных частей автомобиля 
+     * @param firstPercent процент с которым ломается автомобиль 
+     * @param categoriesList Список категорий поломок 
+     * @return возвращает список поломок 
+     */
     private List<String> addCategories(double firstPercent, List<String> categoriesList) {
         List<String> selectedCategories = new ArrayList<>();
         Collections.shuffle(categoriesList);

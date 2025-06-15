@@ -71,6 +71,32 @@ public class ServiceDAO {
         }
     }
     
+    public Service getServiceByCategory(String category) {
+         String sql = "SELECT service_id, category, subcategory, price, required_mechanic_role FROM Services WHERE category = ?";
+        try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setString(1, category);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Service(
+                            rs.getInt("service_id"),
+                            rs.getString("category"),
+                            rs.getString("subcategory"),
+                            rs.getDouble("price"),
+                            rs.getString("required_mechanic_role")
+                    );
+                } else {
+                    return null; 
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Ошибка при получении услуги по id", e);
+        }
+    }
+    
     
     
     

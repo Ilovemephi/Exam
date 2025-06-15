@@ -15,6 +15,12 @@ import java.awt.event.*;
 import java.util.List;
 import mephi.b22901.ae.exam.Logic.CarServiceLogic;
 
+
+/**
+ * Класс окна для модерации заявок на ремонт автомобиля.
+ * Предоставляет интерфейс для создания, диагностики, назначения мастеров и автослесарей,
+ * а также проведения ремонта и просмотра счетов.
+ */
 public class RequestModerationFrame extends JFrame {
 
     private final Request request;
@@ -27,7 +33,13 @@ public class RequestModerationFrame extends JFrame {
     private JLabel mechanicsLabel = new JLabel("-");
     private JLabel resultLabel = new JLabel("-");
     private JLabel statusLabel = new JLabel("-");
-
+    
+    
+    /**
+     * Создаёт новое окно модерации с указанными параметрами.
+     *
+     * @param request Объект заявки на ремонт.
+     */
     public RequestModerationFrame(Request request) {
         this.request = request;
         this.client = clientDAO.getClientById(request.getClientId());
@@ -45,7 +57,11 @@ public class RequestModerationFrame extends JFrame {
 
         setVisible(true);
     }
-
+    
+    /**
+     * 
+     * @return возвращает Панель, которая содержит всю информацию по заявке
+     */
     private JPanel buildInfoPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
 
@@ -92,7 +108,11 @@ public class RequestModerationFrame extends JFrame {
 
         return panel;
     }
-
+    
+    /**
+     * Класс отвечающий за появление нцжных кнопок на панели модерации
+     * @return возвращает собственно эту панель
+     */
     private JPanel buildButtonPanel() {
         JPanel panel = new JPanel();
         String status = request.getStatus();
@@ -163,7 +183,10 @@ public class RequestModerationFrame extends JFrame {
 
         return panel;
     }
-
+    
+    /**
+     * Метод который назначает Мастера-приёмщика для диагностики/Сервисного обслуживания
+     */
     private void assignMaster() {
         if (request.getMasterId() != null) {
             JOptionPane.showMessageDialog(this, "Мастер уже назначен!", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -175,6 +198,9 @@ public class RequestModerationFrame extends JFrame {
         }
     }
 
+    /**
+     * Метод который проводит диагностику автомобиля
+     */
     private void conductDiagnostics() {
         CarServiceLogic logic = new CarServiceLogic();
         try {
@@ -186,6 +212,9 @@ public class RequestModerationFrame extends JFrame {
         }
     }
     
+   /**
+    * Метод который проводит Сервисное обслуживние автомобиля 
+    */ 
    private void conductMaintenance() {
        CarServiceLogic logic = new CarServiceLogic();
        try {
@@ -197,6 +226,9 @@ public class RequestModerationFrame extends JFrame {
        }
    }
 
+    /**
+     * Метод назначает автослесаря для ремонта
+     */
     private void assignMechanic() {
         CarServiceLogic logic = new CarServiceLogic();
         logic.assignMechanic(request); 
@@ -204,6 +236,9 @@ public class RequestModerationFrame extends JFrame {
         dispose();
     }
 
+    /**
+     * Метод который проводит ремонт автомобиля 
+     */
     private void performWork() {
         CarServiceLogic logic = new CarServiceLogic();
         logic.performWork(request); 
@@ -211,8 +246,11 @@ public class RequestModerationFrame extends JFrame {
         dispose();
     }
 
+    /**
+     * Метод выводит счёт за ремонтные работы/Диагностику
+     */
     private void viewInvoice() {
-         CarServiceLogic logic = new CarServiceLogic(); // Создаём экземпляр логики (пока так, позже оптимизируем)
+         CarServiceLogic logic = new CarServiceLogic(); 
         try {
             new InvoiceFrame(logic, request, client, employeeDAO).setVisible(true);
         } catch (Exception e) {

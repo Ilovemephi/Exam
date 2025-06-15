@@ -14,7 +14,7 @@ import mephi.b22901.ae.exam.Logic.CarServiceLogic;
 import mephi.b22901.ae.exam.Request;
 
 /**
- *
+ * Класс, который представляет таблицу, отображающая статус заявок
  * @author artyom_egorkin
  */
 public class RequestListFrame extends javax.swing.JFrame {

@@ -36,6 +36,11 @@ import mephi.b22901.ae.exam.Service;
  *
  * @author artyom_egorkin
  */
+
+/**
+ * Класс который отвечает за всю бизнес-логику программы. Проводит все расчеты, меняет статусы заявки
+ * @author artyom_egorkin
+ */
 public class CarServiceLogic {
     
     private final ClientDAO clientDAO = new ClientDAO();
@@ -50,7 +55,12 @@ public class CarServiceLogic {
 
    
     
-    
+    /**
+     * Метод создающий ноую заявку для нового клиента
+     * @param client Клиент, который будет указан в заявке
+     * @param reason Причина, по которой клиент приехал в сервис(Поломка/Сервисное обслуживание)
+     * @return 
+     */
     public Request createNewRequest(Client client, String reason) {
         if (client == null || reason == null || reason.trim().isEmpty()) {
             throw new IllegalArgumentException("Клиент и причина обращения не могут быть пустыми");
@@ -77,7 +87,10 @@ public class CarServiceLogic {
         return createdRequest;
     }
     
-    
+    /**
+     * Метод который назначает Мастера-приёмщика для заявки
+     * @param request Заявка, для которой назначается Приёмщик
+     */
     public void assignMaster(Request request) { // Назначем именно ПРИЁМЩИКА
         List<Employee> masters = employeeDAO.getEmployeesByRole("Мастер-приёмщик");
         if (masters == null || masters.isEmpty()) {
@@ -91,42 +104,12 @@ public class CarServiceLogic {
     }
     
 
-
-    public void conductDiagnostics(Request request) {
-        if (request.getMasterId() == null) {
-        throw new IllegalStateException("Мастер-приёмщик не назначен, диагностика невозможна.");
-        }
-        if (!"новая заявка".equalsIgnoreCase(request.getStatus())) {
-        throw new IllegalStateException("Диагностику можно проводить только для новых заявок.");
-        }
-        if ("сервисное обслуживание".equalsIgnoreCase(request.getReason())) {
-            throw new IllegalStateException("Диагностика не требуется для сервисного обслуживания.");
-        }
-        
-        CarPartsGenerator generator = new CarPartsGenerator();
-        List<Part> diagnosedParts = generator.generatePartsForServices();
-        RequestPartDAO requestPartDAO = new RequestPartDAO();
-        for (Part part : diagnosedParts) {
-            requestPartDAO.addRequestPart(new RequestPart(request.getRequestId(), part.getId()));
-        }
-        
-        if (diagnosedParts.isEmpty()) {
-            System.out.println("Диагностика: неисправности не обнаружены.");
-            request.setDiagnosticResult("Неисправности не обнаружены");
-        } else {
-            System.out.print("Диагностика выявила: ");
-            for (int i = 0; i < diagnosedParts.size(); i++) {
-                System.out.print(diagnosedParts.get(i).getName());
-                if (i != diagnosedParts.size() - 1) System.out.print(", ");
-            }
-            System.out.println();
-        }
-        request.setDiagnosticResult("Обнаружены неисправности");
-        // Меняем статус заявки
-        request.setStatus("Диагностика");
-        requestDAO.updateRequest(request);
-    }
     
+    
+    /**
+     * Метод который проводит диагностику. Меняет статус заявки на "Проведена диагностика"
+     * @param request Заявка, для которой проводится диагностика 
+     */
     public void conductDiagnostics2(Request request) {
         if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
         if (request.getMasterId() == null) throw new IllegalStateException("Мастер-приемщик не назначен");
@@ -204,7 +187,10 @@ public class CarServiceLogic {
     
     
     
-    
+    /**
+     * Метод, который назначает именно автослесаря для ремонта 
+     * @param request Заявка, для которой назначают автослесаря
+     */
     public void assignMechanic(Request request) {
         if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
         if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) throw new IllegalStateException("Назначение механиков возможно только после диагностики");
@@ -253,7 +239,10 @@ public class CarServiceLogic {
     
     
     
-    
+    /**
+     * Метод, который проводит Сервисное обслуживание. Меняет статус заявки на "Проведено обслуживание"
+     * @param request Заявка, для которой проводится Сервисное обслуживание 
+     */
     public void conductMaintenance(Request request) {
         if (request.getMasterId() == null) {
             throw new IllegalStateException("Мастер-приёмщик не назначен, обслуживание невозможно.");
@@ -289,7 +278,10 @@ public class CarServiceLogic {
     }
     
 
-    
+    /**
+     * Метод, который проводит ремонт после диагностики. Меняет статус заявки на "Проведена работа"
+     * @param request Заявка, для которой проводится ремонт 
+     */
     public void performWork(Request request) {
         if (request == null || request.getRequestId() <= 0) {
             throw new IllegalArgumentException("Заявка недействительна");
@@ -317,7 +309,12 @@ public class CarServiceLogic {
         System.out.println("=== Работа завершена ===");
     }
     
-    
+    /**
+     * Метод, который рассчитывает стоимость всех работ, выставляет счет для заявки 
+     * @param request Заявка, для которой выставляется счет 
+     * @return возвращает заявку
+     * @throws IOException 
+     */
     public Invoice viewInvoice(Request request) throws IOException {
         if (request == null || request.getRequestId() <= 0) {
             throw new IllegalArgumentException("Заявка недействительна");
@@ -351,6 +348,13 @@ public class CarServiceLogic {
             }
         }
         
+        System.out.println("Диагностика: ");
+        if (request.getStatus().equalsIgnoreCase("Проведена работа")) {
+            Service service = new ServiceDAO().getServiceByCategory("Диагностика");
+            totalCost += service.getPrice();
+            System.out.println(" - "+ service.getCategory() + ": " + "Цена: " + service.getPrice());
+        }
+        
         System.out.println("Общая стоимость: " + totalCost);
         
 
@@ -366,6 +370,12 @@ public class CarServiceLogic {
     }
     
 
+    /**
+     * Метод который делает txt файл со счётом
+     * @param invoice Счет для которого делается txt файла 
+     * @param file
+     * @throws IOException 
+     */
     public void saveInvoiceToTxt(Invoice invoice, java.io.File file) throws IOException {
         try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {
             writer.write("Счёт #" + invoice.getId());
@@ -374,6 +384,7 @@ public class CarServiceLogic {
             writer.write("\nОбщая стоимость: " + invoice.getTotalAmount() + " руб.");
         }
     }
+    
     
     public List<Request> getAllRequests() {
         return requestDAO.getAllRequests();

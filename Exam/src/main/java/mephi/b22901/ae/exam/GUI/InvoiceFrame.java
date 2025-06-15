@@ -24,7 +24,7 @@ import mephi.b22901.ae.exam.RequestService;
 import mephi.b22901.ae.exam.Service;
 
 /**
- *
+ * Класс, отвечающий за окно счета за все работы для конкретной заявки
  * @author artyom_egorkin
  */
 public class InvoiceFrame extends javax.swing.JFrame {
@@ -163,7 +163,9 @@ public class InvoiceFrame extends javax.swing.JFrame {
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_backButtonActionPerformed
-
+    /**
+     * Метод который обновляет таблицу и вносит актуальные данные по счету по конкретной заявке
+     */
     private void populateTable() {
         try {
             Invoice invoice = logic.viewInvoice(request);

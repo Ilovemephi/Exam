@@ -5,7 +5,7 @@
 package mephi.b22901.ae.exam.GUI;
 
 /**
- *
+ * Класс, который отображает начальное окно программы. Можно создать новую заявку, посмотреть старую и выйти
  * @author artyom_egorkin
  */
 public class MainFrame extends javax.swing.JFrame {

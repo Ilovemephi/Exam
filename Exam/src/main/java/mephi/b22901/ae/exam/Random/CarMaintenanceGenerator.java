@@ -16,10 +16,18 @@ import mephi.b22901.ae.exam.Service;
  *
  * @author artyom_egorkin
  */
+
+/**
+ * Класс для случайных категорий сервисного обслуживания 
+ * @author artyom_egorkin
+ */
 public class CarMaintenanceGenerator {
     private final Random random = new Random();
     
-    
+    /**
+     * Метод генерирует категории Сервисного обслуживания 
+     * @return Возвращает список категорий сервисного обслуживания 
+     */
     public List<Part> generatePartsForMaintenance () {
         List<Part> maintenanceParts = new ArrayList<>();
         List<Part> maintenancePartsTemp = new ArrayList<>();
