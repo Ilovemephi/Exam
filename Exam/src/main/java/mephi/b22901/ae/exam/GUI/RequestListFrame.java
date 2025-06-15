@@ -5,6 +5,7 @@
 package mephi.b22901.ae.exam.GUI;
 
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import mephi.b22901.ae.exam.Client;
 import mephi.b22901.ae.exam.DAO.ClientDAO;
@@ -152,12 +153,12 @@ public class RequestListFrame extends javax.swing.JFrame {
             Request request = carServiceLogic.getRequestById(requestId); 
             if (request != null) {
                 // Пока выводим сообщение, позже откроем RequestModerationFrame
-                javax.swing.JOptionPane.showMessageDialog(this, "Выбрана заявка #" + requestId);
+                new RequestModerationFrame(request).setVisible(true);
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Заявка не найдена!", "Ошибка", javax.swing.JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Заявка не найдена!", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Выберите заявку!", "Ошибка", javax.swing.JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Выберите заявку!", "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_selectButtonActionPerformed
 
