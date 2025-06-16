@@ -260,7 +260,7 @@ public class InvoiceFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Ошибка при создании счёта: " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable InvoiceTable;
     private javax.swing.JButton backButton;
