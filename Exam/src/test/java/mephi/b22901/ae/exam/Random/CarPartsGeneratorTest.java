@@ -25,7 +25,6 @@ public class CarPartsGeneratorTest {
 
     @BeforeEach
     void setUp() {
-        // Используем существующую конфигурацию подключения к PostgreSQL
         generator = new CarPartsGenerator();
         partDAO = new PartDAO();
     }
