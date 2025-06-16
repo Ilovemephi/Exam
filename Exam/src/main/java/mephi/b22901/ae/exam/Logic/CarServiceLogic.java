@@ -32,13 +32,13 @@ import mephi.b22901.ae.exam.RequestPart;
 import mephi.b22901.ae.exam.RequestService;
 import mephi.b22901.ae.exam.Service;
 
-/**
- *
- * @author artyom_egorkin
- */
+
 
 /**
- * Класс который отвечает за всю бизнес-логику программы. Проводит все расчеты, меняет статусы заявки
+ * Класс, отвечающий за всю бизнес-логику программы. Управляет созданием и обработкой заявок,
+ * назначением мастеров и автослесарей, проведением диагностики, обслуживания и ремонта,
+ * а также выставлением счетов. Выполняет расчеты стоимости и обновляет статусы заявок.
+ *
  * @author artyom_egorkin
  */
 public class CarServiceLogic {
@@ -59,7 +59,7 @@ public class CarServiceLogic {
      * Метод создающий ноую заявку для нового клиента
      * @param client Клиент, который будет указан в заявке
      * @param reason Причина, по которой клиент приехал в сервис(Поломка/Сервисное обслуживание)
-     * @return 
+     * @return Объект {@link Request} с созданной заявкой и статусом "Новая заявка".
      */
     public Request createNewRequest(Client client, String reason) {
         if (client == null || reason == null || reason.trim().isEmpty()) {
@@ -107,8 +107,12 @@ public class CarServiceLogic {
     
     
     /**
-     * Метод который проводит диагностику. Меняет статус заявки на "Проведена диагностика"
-     * @param request Заявка, для которой проводится диагностика 
+     * Проводит диагностику для заявки, генерирует поломки, привязывает услуги и меняет статус на "Проведена диагностика".
+     *
+     * @param request Заявка, для которой проводится диагностика.
+     * @throws IllegalArgumentException Если заявка недействительна.
+     * @throws IllegalStateException Если мастер не назначен, диагностика уже проведена или причина — сервисное обслуживание.
+     * @throws RuntimeException Если возникла ошибка при обновлении заявки.
      */
     public void conductDiagnostics2(Request request) {
         if (request == null || request.getRequestId() <= 0) throw new IllegalArgumentException("Некорректная заявка");
@@ -416,6 +420,12 @@ public class CarServiceLogic {
     }
     
     
+    /**
+     * Обрабатывает отказ клиента от проведения ремонта, меняет статус на "Отказ от ремонта"
+     * и выставляет счёт только за диагностику.
+     *
+     * @param request Заявка, для которой происходит отказ от ремонта.
+     */
     
     public void declineRepair(Request request) {
         if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) {

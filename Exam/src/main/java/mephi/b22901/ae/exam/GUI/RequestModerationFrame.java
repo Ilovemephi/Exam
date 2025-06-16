@@ -266,7 +266,9 @@ public class RequestModerationFrame extends JFrame {
         }
     }
     
-    
+    /**
+     * Метод. который выводит окно об отказе от ремонта и вызывает соответсвующую бизнес-логику
+     */
     private void declineRepair() {
         int confirm = JOptionPane.showConfirmDialog(this,
             "Вы уверены, что клиент отказывается от ремонта?\nБудет выставлен счёт за диагностику.",

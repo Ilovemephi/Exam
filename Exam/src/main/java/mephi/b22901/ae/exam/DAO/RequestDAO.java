@@ -11,11 +11,22 @@ import mephi.b22901.ae.exam.Connection.DBConnection;
 import mephi.b22901.ae.exam.Request;
 
 /**
- *
+ * Класс Data Access Object (DAO) для работы с таблицей заявок в базе данных (`Requests`).
+ * Предоставляет методы для создания, получения, обновления и поиска заявок по различным критериям.
  * @author artyom_egorkin
  */
 public class RequestDAO {
     
+    
+    /**
+     * Добавляет новую заявку в таблицу `Requests` и возвращает её идентификатор.
+     * Использует SQL-выражение `RETURNING` для получения сгенерированного `request_id`.
+     *
+     * @param request Объект {@link Request}, содержащий данные новой заявки.
+     *                Поле `master_id` может быть {@code null}, если мастер не назначен.
+     * @return Идентификатор новой заявки (`request_id`).
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public int addRequest(Request request) {
         String sql = "INSERT INTO Requests (client_id, reason, status, diagnostic_result, master_id, work_result) " +
                      "VALUES (?, ?, ?, ?, ?, ?) RETURNING request_id";
@@ -48,6 +59,16 @@ public class RequestDAO {
         }
     }
     
+    
+    
+    /**
+     * Возвращает заявку по её уникальному идентификатору.
+     *
+     * @param requestId Идентификатор заявки (уникальный ключ в таблице Requests).
+     * @return Объект {@link Request}, соответствующий указанному идентификатору,
+     *         или {@code null}, если заявка не найдена.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public Request getRequestById(int requestId) {
         String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result " +
                      "FROM Requests WHERE request_id = ?";
@@ -80,6 +101,15 @@ public class RequestDAO {
     }
     
     
+    
+    
+    /**
+     * Возвращает список всех заявок, хранящихся в таблице `Requests`.
+     *
+     * @return Список объектов {@link Request}, представляющих все заявки.
+     *         Возвращает пустой список, если заявок нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public List<Request> getAllRequests() {
         List<Request> requests = new ArrayList<>();
         String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result FROM Requests";
@@ -107,6 +137,17 @@ public class RequestDAO {
         return requests;
     }
     
+    
+    
+    
+    /**
+     * Возвращает список всех заявок, связанных с указанным идентификатором клиента.
+     *
+     * @param clientId Идентификатор клиента (уникальный ключ в таблице Clients).
+     * @return Список объектов {@link Request}, соответствующих указанному клиенту.
+     *         Возвращает пустой список, если заявок нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public List<Request> getRequestsByClientId(int clientId) {
         List<Request> requests = new ArrayList<>();
         String sql = "SELECT request_id, client_id, reason, status, diagnostic_result, master_id, work_result " +
@@ -137,6 +178,17 @@ public class RequestDAO {
         return requests;
     }
     
+    
+    
+    /**
+     * Обновляет данные существующей заявки в таблице `Requests`.
+     *
+     * @param request Объект {@link Request}, содержащий обновлённые данные.
+     *                Поле `master_id` может быть {@code null}, если мастер не назначен.
+     * @return {@code true}, если обновление прошло успешно (хотя бы одна строка изменена),
+     *         {@code false} в противном случае.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public boolean updateRequest(Request request) {
         String sql = "UPDATE Requests SET " + "reason = ?, " +"status = ?, " +
                      "diagnostic_result = ?, " +  "master_id = ?, "  +

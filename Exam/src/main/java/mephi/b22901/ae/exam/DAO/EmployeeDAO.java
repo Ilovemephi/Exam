@@ -14,11 +14,25 @@ import mephi.b22901.ae.exam.Connection.DBConnection;
 import mephi.b22901.ae.exam.Employee;
 
 /**
+ * Класс Data Access Object (DAO) для работы с таблицей сотрудников в базе данных (Employees).
+ * Предоставляет методы для получения информации о сотрудниках по их идентификатору,
+ * получения списка всех сотрудников или сотрудников по роли.
  *
  * @author artyom_egorkin
  */
 public class EmployeeDAO {
     
+    
+    
+    
+    /**
+     * Возвращает сотрудника по его уникальному идентификатору.
+     *
+     * @param employeeId Идентификатор сотрудника (уникальный ключ в таблице Employees).
+     * @return Объект {@link Employee}, соответствующий указанному идентификатору,
+     *         или {@code null}, если сотрудник не найден.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public Employee getEmployeeById(int employeeId) {
         String sql = "SELECT employee_id, full_name, role FROM Employees WHERE employee_id = ?";
         try (
@@ -42,6 +56,15 @@ public class EmployeeDAO {
         }
     }
     
+    
+    
+    /**
+     * Возвращает список всех сотрудников, хранящихся в таблице `Employees`.
+     *
+     * @return Список объектов {@link Employee}, представляющих всех сотрудников.
+     *         Возвращает пустой список, если сотрудников нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
         String sql = "SELECT employee_id, full_name, role FROM Employees";
@@ -66,6 +89,14 @@ public class EmployeeDAO {
     }
     
     
+    /**
+     * Возвращает список сотрудников, соответствующих указанной роли.
+     *
+     * @param role Роль сотрудника (например, "Мастер" или "Автослесарь").
+     * @return Список объектов {@link Employee}, соответствующих указанной роли.
+     *         Возвращает пустой список, если сотрудников с такой ролью нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public List<Employee> getEmployeesByRole(String role) {
         List<Employee> employees = new ArrayList<>();
         String sql = "SELECT employee_id, full_name, role FROM Employees WHERE role = ?";

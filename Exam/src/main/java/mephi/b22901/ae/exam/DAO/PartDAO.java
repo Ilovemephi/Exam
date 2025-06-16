@@ -15,11 +15,22 @@ import mephi.b22901.ae.exam.Part;
 import mephi.b22901.ae.exam.RequestPart;
 
 /**
+ * Класс Data Access Object (DAO) для работы с таблицей запчастей в базе данных (`Parts`).
+ * Предоставляет методы для получения информации о запчастях, таких как получение всех запчастей
+ * или запчасти по её идентификатору.
  *
  * @author artyom_egorkin
  */
 public class PartDAO {
     
+    
+    /**
+     * Возвращает список всех запчастей, хранящихся в таблице `Parts`.
+     *
+     * @return Список объектов {@link Part}, представляющих все запчасти.
+     *         Возвращает пустой список, если запчастей нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public List<Part> getAllParts() {
         List<Part> parts = new ArrayList<>();
         String sql = "SELECT part_id, name, category, subcategory, price FROM Parts";
@@ -45,6 +56,16 @@ public class PartDAO {
         return parts;
     }
     
+    
+    
+    /**
+     * Возвращает запчасть по её уникальному идентификатору.
+     *
+     * @param partId Идентификатор запчасти (уникальный ключ в таблице Parts).
+     * @return Объект {@link Part}, соответствующий указанному идентификатору,
+     *         или {@code null}, если запчасть не найдена.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     */
     public Part getPartById(int partId) {
         String sql = "SELECT part_id, name, category, subcategory, price FROM Parts WHERE part_id = ?";
         try (

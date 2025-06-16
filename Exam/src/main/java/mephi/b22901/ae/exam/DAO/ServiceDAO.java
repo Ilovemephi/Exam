@@ -15,11 +15,23 @@ import mephi.b22901.ae.exam.RequestService;
 import mephi.b22901.ae.exam.Service;
 
 /**
- *
+ *DAO Класс для заявок, который отвечает за работу с таблицей Service в БД 
+ * Предоставляет методы получения всех услуг, услуги по ее ID, по ее категории 
  * @author artyom_egorkin
  */
 public class ServiceDAO {
     
+    
+    
+    
+    /**
+     * Возвращает список всех услуг, доступных в базе данных.
+     *
+     * @return Список объектов {@link Service}, представляющих все услуги.
+     *         Возвращает пустой список, если услуг нет.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     *         (обёртка над {@link SQLException}).
+     */
     public List<Service> getAllServices() {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT service_id, category, subcategory, price, required_mechanic_role FROM Services";
@@ -45,6 +57,18 @@ public class ServiceDAO {
         return services;
     }
     
+    
+    
+    
+    /**
+     * Возвращает услугу по её уникальному идентификатору.
+     *
+     * @param serviceId Идентификатор услуги (уникальный ключ в таблице Services).
+     * @return Объект {@link Service}, соответствующий указанному идентификатору,
+     *         или {@code null}, если услуга не найдена.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     *         (обёртка над {@link SQLException}).
+     */
     public Service getServiceById(int serviceId) {
         String sql = "SELECT service_id, category, subcategory, price, required_mechanic_role FROM Services WHERE service_id = ?";
         try (
@@ -71,6 +95,18 @@ public class ServiceDAO {
         }
     }
     
+    
+    
+    /**
+     * Возвращает первую услугу, соответствующую указанной категории.
+     * Если несколько услуг имеют одну категорию, возвращается только первая запись.
+     *
+     * @param category Категория услуги для поиска (например, "Диагностика").
+     * @return Объект {@link Service}, соответствующий указанной категории,
+     *         или {@code null}, если услуга не найдена.
+     * @throws RuntimeException Если возникает ошибка при выполнении SQL-запроса
+     *         (обёртка над {@link SQLException}).
+     */
     public Service getServiceByCategory(String category) {
          String sql = "SELECT service_id, category, subcategory, price, required_mechanic_role FROM Services WHERE category = ?";
         try (
