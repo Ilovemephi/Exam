@@ -13,9 +13,9 @@ import java.sql.SQLException;
  * @author artyom_egorkin
  */
 public class DBConnection {
-    private static final String URL = "jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres";
-    private static final String USER = "postgres.idxjorycpptjdgjuyjtf";
-    private static final String PASSWORD = "Brateevo11b";
+    private static  String URL = "jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres";
+    private static String USER = "postgres.idxjorycpptjdgjuyjtf";
+    private static  String PASSWORD = "Brateevo11b";
     
     private static Connection testConnection = null;
 
@@ -30,9 +30,15 @@ public class DBConnection {
     }
     
     
-    public static void setTestConnection(Connection conn) {
-        testConnection = conn;
+    public static void useUrl(String newUrl, String newUser, String newPassword) { // Для тестов
+        URL = newUrl;
+        USER = newUser;
+        PASSWORD = newPassword;
     }
+
+    
+    
+    
     
     
     

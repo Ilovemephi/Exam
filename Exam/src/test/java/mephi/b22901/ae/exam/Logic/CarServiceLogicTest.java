@@ -55,7 +55,7 @@ public class CarServiceLogicTest {
 
     @Test
     void testConductDiagnostics2_Success() throws SQLException {
-        Client client = new Client("Иван Иванов", "+79991234567", "A123BC");
+        Client client = new Client("Иванушка Иванов", "+79991234569", "A163BC");
         Request request = logic.createNewRequest(client, "Поломка");
         logic.assignMaster(request);
         logic.conductDiagnostics2(request);
@@ -64,7 +64,7 @@ public class CarServiceLogicTest {
 
     @Test
     void testConductDiagnostics2_InvalidStatus() throws SQLException {
-        Client client = new Client("Иван Иванов", "+79991234567", "A123BC");
+        Client client = new Client("Ваня Иванов", "+79691238567", "Q123BC");
         Request request = logic.createNewRequest(client, "Поломка");
         request.setStatus("Проведена работа"); // Некорректный статус
         try {
@@ -84,7 +84,7 @@ public class CarServiceLogicTest {
 
     @Test
     void testViewInvoice_Success() throws SQLException, IOException {
-        Client client = new Client("Иван Иванов", "+79991234567", "A123BC");
+        Client client = new Client("Гена Букин", "+79871234567", "L123BC");
         Request request = logic.createNewRequest(client, "Поломка");
         logic.assignMaster(request);
         logic.conductDiagnostics2(request);
@@ -97,7 +97,7 @@ public class CarServiceLogicTest {
 
     @Test
     void testViewInvoice_DeclineRepair() throws SQLException, IOException {
-        Client client = new Client("Иван Иванов", "+79991234567", "A123BC");
+        Client client = new Client("Роберт Бобов", "+79121230567", "A192BC");
         Request request = logic.createNewRequest(client, "Поломка");
         logic.assignMaster(request);
         logic.conductDiagnostics2(request);
