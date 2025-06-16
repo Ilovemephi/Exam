@@ -21,9 +21,6 @@ public class DBConnection {
 
     public static Connection getConnection() {
         try {
-            if (testConnection != null && !testConnection.isClosed()) {
-                return testConnection; // Используем тестовое соединение
-            }
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Подключение к БД успешно");
             return conn;

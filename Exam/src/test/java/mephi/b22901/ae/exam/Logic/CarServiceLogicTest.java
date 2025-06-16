@@ -22,33 +22,15 @@ public class CarServiceLogicTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        // Переключаемся на H2 для тестов
-        System.setProperty("env", "test");
-        // Инициализация H2 базы данных в памяти
-        connection = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "");
+      
         logic = new CarServiceLogic();
 
-        // Создание таблиц и вставка тестовых данных
-        Statement statement = connection.createStatement();
-        statement.execute("DROP TABLE IF EXISTS clients");
-        statement.execute("CREATE TABLE clients (client_id IDENTITY PRIMARY KEY, full_name VARCHAR(100), phone_number VARCHAR(15) UNIQUE, car_number VARCHAR(10))");
-        statement.execute("INSERT INTO clients (full_name, phone_number, car_number) VALUES ('Иван Иванов', '+79991234567', 'A123BC')");
-
-        statement.execute("DROP TABLE IF EXISTS requests");
-        statement.execute("CREATE TABLE requests (request_id IDENTITY PRIMARY KEY, client_id INT, status VARCHAR(50), description VARCHAR(255))");
-        statement.execute("DROP TABLE IF EXISTS employees");
-        statement.execute("CREATE TABLE employees (employee_id IDENTITY PRIMARY KEY, full_name VARCHAR(100), role VARCHAR(50))");
-        statement.execute("INSERT INTO employees (full_name, role) VALUES ('Мастер Иванов', 'Мастер-приёмщик')");
+        
     }
 
     @AfterEach
     void tearDown() throws SQLException {
-        // Очистка данных и закрытие соединения
         if (connection != null && !connection.isClosed()) {
-            Statement statement = connection.createStatement();
-            statement.execute("DROP TABLE IF EXISTS clients");
-            statement.execute("DROP TABLE IF EXISTS requests");
-            statement.execute("DROP TABLE IF EXISTS employees");
             connection.close();
         }
     }
