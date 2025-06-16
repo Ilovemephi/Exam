@@ -13,8 +13,8 @@ import java.sql.SQLException;
  * @author artyom_egorkin
  */
 public class DBConnection {
-    private static final String URL = "jdbc:postgresql://localhost:5432/CarService";
-    private static final String USER = "postgres";
+    private static final String URL = "jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres";
+    private static final String USER = "postgres.idxjorycpptjdgjuyjtf";
     private static final String PASSWORD = "Brateevo11b";
 
     public static Connection getConnection() {
