@@ -49,6 +49,10 @@ class PartDAOTest {
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка при очистке тестовой БД", e);
         }
+        DBConnection.useUrl("jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres",
+                       "postgres.idxjorycpptjdgjuyjtf",
+                       "Brateevo11b");
+        System.out.println("Сброс подключения на PostgreSQL");
     }
 
     @BeforeEach
