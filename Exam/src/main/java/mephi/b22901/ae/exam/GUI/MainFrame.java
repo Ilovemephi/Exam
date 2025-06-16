@@ -10,9 +10,7 @@ package mephi.b22901.ae.exam.GUI;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form MainFrame
-     */
+    
     public MainFrame() {
         initComponents();
     }
@@ -74,14 +72,25 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Обработчик события просмтра всех существующих в системе заявок. Открывает окно существующих заявок 
+     */
     private void requestsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestsButtonActionPerformed
         new RequestListFrame().setVisible(true);
     }//GEN-LAST:event_requestsButtonActionPerformed
 
+    
+    /**
+     * Обработчик события создать новую заявку. Открывает окно создания заявки
+     */
     private void newRequestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newRequestButtonActionPerformed
         new NewRequestFrame().setVisible(true);
     }//GEN-LAST:event_newRequestButtonActionPerformed
 
+    
+    /**
+     * Обработчик выхода из программы 
+     */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed

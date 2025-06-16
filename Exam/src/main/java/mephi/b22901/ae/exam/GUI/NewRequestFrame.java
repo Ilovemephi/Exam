@@ -10,7 +10,7 @@ import mephi.b22901.ae.exam.Logic.CarServiceLogic;
 import mephi.b22901.ae.exam.Request;
 
 /**
- * Класс, для создания новой заявки 
+ * Класс, для создания новой заявки. Здесь вводится ФИО клиента, номер телефона, автомобиля, причина обращения.
  * @author artyom_egorkin
  */
 public class NewRequestFrame extends javax.swing.JFrame {

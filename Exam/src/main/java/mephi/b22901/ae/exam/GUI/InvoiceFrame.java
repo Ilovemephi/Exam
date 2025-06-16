@@ -24,7 +24,12 @@ import mephi.b22901.ae.exam.RequestService;
 import mephi.b22901.ae.exam.Service;
 
 /**
- * Класс, отвечающий за окно счета за все работы для конкретной заявки
+ * Класс, отвечающий за окно счёта за все работы для конкретной заявки.
+ * Отображает информацию о клиенте, деталях, услугах и общей стоимости,
+ * а также предоставляет возможность сохранить счёт в текстовый файл и закрыть окно.
+ * Использует бизнес-логику из {@link CarServiceLogic} для генерации счёта и его сохранения.
+ * Окно инициализируется с использованием сгенерированного кода Form Editor.
+ *
  * @author artyom_egorkin
  */
 public class InvoiceFrame extends javax.swing.JFrame {
@@ -34,6 +39,18 @@ public class InvoiceFrame extends javax.swing.JFrame {
     private final EmployeeDAO employeeDAO;
 
    
+    
+    
+    /**
+     * Конструктор окна счёта.
+     * Инициализирует окно с данными заявки, клиента и DAO сотрудников,
+     * а также заполняет таблицу актуальными данными счёта.
+     *
+     * @param logic Экземпляр {@link CarServiceLogic} для работы с бизнес-логикой.
+     * @param request Заявка, для которой формируется счёт.
+     * @param client Клиент, связанный с заявкой.
+     * @param employeeDAO DAO для доступа к данным сотрудников.
+     */
     public InvoiceFrame(CarServiceLogic logic, Request request, Client client, EmployeeDAO employeeDAO) {
         
         this.logic = logic;
@@ -141,6 +158,14 @@ public class InvoiceFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /**
+     * Обработчик события нажатия кнопки "Сохранить как...".
+     * Открывает диалог выбора файла для сохранения счёта в текстовом формате
+     * и вызывает метод сохранения счёта через бизнес-логику.
+     *
+     * @param evt Событие нажатия кнопки.
+     */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Сохранить счёт");
@@ -160,11 +185,17 @@ public class InvoiceFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    
+    
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_backButtonActionPerformed
+    
+    
     /**
-     * Метод который обновляет таблицу и вносит актуальные данные по счету по конкретной заявке
+     * Метод, который обновляет таблицу и вносит актуальные данные по счёту для конкретной заявки.
+     * Получает данные о деталях и услугах из базы данных, формирует строки для таблицы
+     * и обновляет заголовок окна с номером счёта.
      */
     private void populateTable() {
         try {
