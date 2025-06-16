@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- *
+ * Класс, отвечающий за подключение к БД
  * @author artyom_egorkin
  */
 public class DBConnection {

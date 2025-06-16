@@ -6,7 +6,7 @@ import mephi.b22901.ae.exam.Connection.DBConnection;
 import mephi.b22901.ae.exam.GUI.MainFrame;
 
 /**
- *
+ * Main класс. Тут запускается программа
  * @author artyom_egorkin
  */
 public class Exam {
