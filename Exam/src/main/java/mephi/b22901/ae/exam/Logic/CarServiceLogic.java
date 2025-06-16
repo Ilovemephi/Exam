@@ -319,15 +319,32 @@ public class CarServiceLogic {
         if (request == null || request.getRequestId() <= 0) {
             throw new IllegalArgumentException("Заявка недействительна");
         }
-        if (!"Проведена работа".equalsIgnoreCase(request.getStatus()) && !("Проведено обслуживание".equalsIgnoreCase(request.getStatus()))) {
+        if (!"Проведена работа".equalsIgnoreCase(request.getStatus()) && !("Проведено обслуживание".equalsIgnoreCase(request.getStatus()))  && !"Отказ от ремонта".equalsIgnoreCase(request.getStatus())) {
             throw new IllegalStateException("Завершение возможно только для заявок в статусе 'Ремонт' или 'Диагностика' с причиной 'сервисное обслуживание'.");
         }
+        
+        double totalCost = 0.0;
+         InvoiceDAO invoiceDAO = new InvoiceDAO();
+        if ("Отказ от ремонта".equalsIgnoreCase(request.getStatus())) {
+            Service diagService = serviceDAO.getServiceByCategory("Диагностика");
+            totalCost = diagService.getPrice();
+            System.out.println("Цена диагностики: " + totalCost);
+            Invoice invoice = new Invoice (
+                    request.getRequestId(),
+                    request.getClientId(),
+                    request.getMasterId(),
+                    (int)totalCost
+            );
+            invoiceDAO.addInvoice(invoice);
+            return invoice;
+        }
+        
         
         System.out.println("=== Просмтор счета для заявки #" + request.getRequestId() + " ===");
         
 
         // 1. Расчёт общей стоимости
-        double totalCost = 0.0;
+        
         List<RequestPart> requestParts = requestPartDAO.getRequestPartsByRequestId(request.getRequestId());
         List<RequestService> requestServices = requestServiceDAO.getRequestServicesByRequestId(request.getRequestId());
         System.out.println("Детали: ");
@@ -360,7 +377,7 @@ public class CarServiceLogic {
 
 
         // 3. Создание счёта
-        InvoiceDAO invoiceDAO = new InvoiceDAO();
+        invoiceDAO = new InvoiceDAO();
         Invoice invoice = new Invoice(request.getRequestId(), request.getClientId(), request.getMasterId(), (int) totalCost);
         int invoiceId = invoiceDAO.addInvoice(invoice);
         System.out.println("Счёт создан. ID: " + invoiceId);
@@ -398,6 +415,34 @@ public class CarServiceLogic {
         return requestDAO.getRequestById(requestId); 
     }
     
+    
+    
+    public void declineRepair(Request request) {
+        if (!"Проведена диагностика".equalsIgnoreCase(request.getStatus())) {
+            throw new IllegalStateException("Отказ возможен только после проведённой диагностики.");
+        }
+
+        request.setStatus("Отказ от ремонта");
+        request.setWorkResult("Клиент отказался от ремонта");
+        requestDAO.updateRequest(request);
+
+        Service diagService = serviceDAO.getServiceByCategory("Диагностика");
+        if (diagService == null) {
+            throw new RuntimeException("Услуга 'Диагностика' не найдена в базе");
+        }
+
+        Invoice invoice = new Invoice(
+            request.getRequestId(),
+            request.getClientId(),
+            request.getMasterId(),
+            (int) diagService.getPrice()
+        );
+        new InvoiceDAO().addInvoice(invoice);
+
+        System.out.println("Клиент отказался от ремонта. Выставлен счёт только за услугу 'Диагностика'.");
+    }
+
+
     
     
     

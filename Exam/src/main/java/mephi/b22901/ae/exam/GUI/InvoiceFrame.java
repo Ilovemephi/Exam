@@ -171,41 +171,49 @@ public class InvoiceFrame extends javax.swing.JFrame {
             Invoice invoice = logic.viewInvoice(request);
             DefaultTableModel model = (DefaultTableModel) InvoiceTable.getModel();
             model.setRowCount(0); 
-
-            // Получение списка деталей
-            List<RequestPart> requestParts = new RequestPartDAO().getRequestPartsByRequestId(request.getRequestId());
             String partsList = "";
-            boolean hasParts = false;
-            for (RequestPart rp : requestParts) {
-                Part part = new PartDAO().getPartById(rp.getPartId());
-                if (part != null) {
-                    if (hasParts) {
-                        partsList += ", ";
-                    }
-                    partsList += part.getName();
-                    hasParts = true;
-                }
-            }
-            if (!hasParts) {
-                partsList = "Нет заменённых деталей";
-            }
-
-            // Получение списка услуг
-            List<RequestService> requestServices = new RequestServiceDAO().getRequestServicesByRequestId(request.getRequestId());
             String servicesList = "";
-            boolean hasServices = false;
-            for (RequestService rs : requestServices) {
-                Service service = new ServiceDAO().getServiceById(rs.getServiceId());
-                if (service != null) {
-                    if (hasServices) {
-                        servicesList += ", ";
+            if ("Отказ от ремонта".equalsIgnoreCase(request.getStatus())){
+                Service diag = new ServiceDAO().getServiceByCategory("Диагностика");
+                servicesList = diag.getCategory();
+                partsList = "Без ремонта";
+            } else {
+
+                // Получение списка деталей
+                List<RequestPart> requestParts = new RequestPartDAO().getRequestPartsByRequestId(request.getRequestId());
+
+                boolean hasParts = false;
+                for (RequestPart rp : requestParts) {
+                    Part part = new PartDAO().getPartById(rp.getPartId());
+                    if (part != null) {
+                        if (hasParts) {
+                            partsList += ", ";
+                        }
+                        partsList += part.getName();
+                        hasParts = true;
                     }
-                    servicesList += service.getSubcategory();
-                    hasServices = true;
                 }
-            }
-            if (!hasServices) {
-                servicesList = "Нет услуг";
+                if (!hasParts) {
+                    partsList = "Нет заменённых деталей";
+                }
+
+                // Получение списка услуг
+                List<RequestService> requestServices = new RequestServiceDAO().getRequestServicesByRequestId(request.getRequestId());
+
+                boolean hasServices = false;
+                for (RequestService rs : requestServices) {
+                    Service service = new ServiceDAO().getServiceById(rs.getServiceId());
+                    if (service != null) {
+                        if (hasServices) {
+                            servicesList += ", ";
+                        }
+                        servicesList += service.getSubcategory();
+                        hasServices = true;
+                    }
+                }
+                if (!hasServices) {
+                    servicesList = "Нет услуг";
+                }
             }
 
             // Добавление строки с данными

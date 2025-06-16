@@ -149,16 +149,24 @@ public class RequestModerationFrame extends JFrame {
             RequestMechanicsDAO rmDAO = new RequestMechanicsDAO();
             List<Integer> mechanicIds = rmDAO.getMechanicsForRequest(request.getRequestId());
             if (mechanicIds.isEmpty()) {
-    
-            JButton assignMechanicBtn = new JButton("Назначить автослесаря");
-            assignMechanicBtn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    assignMechanic();
-                }
-            });
-            panel.add(assignMechanicBtn);
-            
+                JButton agreeRepairBtn = new JButton("Согласен на ремонт");
+                agreeRepairBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        assignMechanic();
+                    }
+                });
+                panel.add(agreeRepairBtn);
+                
+                JButton declineRepairBtn = new JButton("Отказ от ремонта");
+                declineRepairBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        declineRepair();
+                    }
+                });
+                panel.add(declineRepairBtn);
             }
+            
+
             
             if (!"Проведена работа".equalsIgnoreCase(status)){
                 if (!mechanicIds.isEmpty()){
@@ -171,7 +179,7 @@ public class RequestModerationFrame extends JFrame {
                     panel.add(doWorkBtn);
                 }
             }
-        } else if ("Проведена работа".equalsIgnoreCase(status) || "Проведено обслуживание".equalsIgnoreCase(status)) {
+        } else if ("Проведена работа".equalsIgnoreCase(status) || "Проведено обслуживание".equalsIgnoreCase(status) || "Отказ от ремонта".equalsIgnoreCase(status)) {
             JButton viewInvoiceBtn = new JButton("Просмотреть счёт");
             viewInvoiceBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -258,6 +266,20 @@ public class RequestModerationFrame extends JFrame {
         }
     }
     
+    
+    private void declineRepair() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Вы уверены, что клиент отказывается от ремонта?\nБудет выставлен счёт за диагностику.",
+            "Подтверждение отказа", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            CarServiceLogic logic = new CarServiceLogic();
+            logic.declineRepair(request);
+            JOptionPane.showMessageDialog(this, "Ремонт отменён. Клиенту выставлен счёт за диагностику.");
+            dispose();
+        }
+    }
+
     
     
     
