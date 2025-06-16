@@ -16,9 +16,14 @@ public class DBConnection {
     private static final String URL = "jdbc:postgresql://aws-0-eu-north-1.pooler.supabase.com:5432/postgres";
     private static final String USER = "postgres.idxjorycpptjdgjuyjtf";
     private static final String PASSWORD = "Brateevo11b";
+    
+    private static Connection testConnection = null;
 
     public static Connection getConnection() {
         try {
+            if (testConnection != null && !testConnection.isClosed()) {
+                return testConnection; // Используем тестовое соединение
+            }
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Подключение к БД успешно");
             return conn;
@@ -26,4 +31,12 @@ public class DBConnection {
             throw new RuntimeException("Ошибка подключения к БД", e);
         }
     }
+    
+    
+    public static void setTestConnection(Connection conn) {
+        testConnection = conn;
+    }
+    
+    
+    
 }
