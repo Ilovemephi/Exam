@@ -4,6 +4,11 @@
  */
 package mephi.b22901.ae.exam.GUI;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mephi.b22901.ae.exam.Connection.DBConnection;
+
 /**
  * Класс, который отображает начальное окно программы. Можно создать новую заявку, посмотреть старую и выйти
  * @author artyom_egorkin
@@ -93,6 +98,11 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         System.exit(0);
+        try {
+            DBConnection.getConnection().close();
+        } catch (SQLException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_exitButtonActionPerformed
 
    
